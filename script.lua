@@ -95,7 +95,7 @@ if ({
         World3 = true
     end
 else
-    game.Players.LocalPlayer:Kick('Unsupported Game')
+    game.Players.LocalPlayer:Kick('Incorrect Place Id❌')
 end
 
 repeat
@@ -1691,12 +1691,12 @@ print('--[[Loaded UI]]--')
 
 local Fluent = loadstring(game:HttpGet("https://github.com/dawid-scripts/Fluent/releases/latest/download/main.lua"))()
 local Window = Fluent:CreateWindow({
-    Title = 'Banana Cat Hub [ Premium ]',
-    SubTitle = 'by obii',
+    Title = 'Eclipse Hub V3 [Freemium] Valentines Day Edition',
+    SubTitle = 'By Luan Cat',
     TabWidth = 155,
     Size = UDim2.fromOffset(500, 350),
     Acrylic = false,
-    Theme = 'Dark',
+    Theme = 'Rose',
     MinimizeKey = Enum.KeyCode.End,
 })
 
@@ -1708,6 +1708,7 @@ local Tabs = {
   Main = Window:AddTab({Title = "Tab Farming", Icon = ""}),
   Stack = Window:AddTab({Title = "Tab Stack Farm", Icon = ""}),
   Other = Window:AddTab({Title = "Tab Farming Other", Icon = ""}),
+  Valentine = Window:AddTab({Title = "❤️ Valentines Day", Icon = ""}),
   Blog = Window:AddTab({Title = "Tab Fruit And Raid", Icon = ""}),
   Sea = Window:AddTab({Title = "Tab Sea Event", Icon = ""}),
   ChooseSkill = Window:AddTab({Title = "Tab Setting Select Skill", Icon = ""}),
@@ -11145,7 +11146,7 @@ Input = Tabs.PVP:AddInput('Input', {
 game.StarterGui:SetCore('SendNotification', {
     Title = 'Yes Or No',
     Text = 'U want reset Config?',
-    Icon = 'rbxassetid://5009915795',
+    Icon = 'rbxassetid://112518061635682',
     Duration = 100000,
     Button1 = 'Yes',
     Button2 = 'No',
@@ -11189,7 +11190,7 @@ Image.AnchorPoint = Vector2.new(0.5, 0.5)
 Image.Position = UDim2.new(0.5, 0, 0.5, 0)
 Image.Size = UDim2.new(0, 40, 0, 40)
 Image.BackgroundTransparency = 1
-Image.Image = "rbxassetid://5009915795"
+Image.Image = "rbxassetid://112518061635682"
 
 -- Botão invisível
 local Button = Instance.new("TextButton")
@@ -11517,6 +11518,6 @@ print('\u{2705} Smooth + Stable Anti-Lag Activated - Made by obii')
 game.StarterGui:SetCore('SendNotification', {
     Title = 'UPDATE!',
     Text = 'Reduce Lag And Fixed Some Functions\u{2705}',
-    Icon = 'rbxassetid://5009915795',
+    Icon = 'rbxassetid://112518061635682',
     Duration = 8,
 })
