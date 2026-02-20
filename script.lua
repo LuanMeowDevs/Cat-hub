@@ -2396,7 +2396,7 @@ QuestNeta = function()
 		};
 	end;
 	local Library = loadstring(game:HttpGet("https://pastefy.app/2NsMZRkm/raw"))():MakeWindow({
-    Title = "M3OWl Hub V1",
+    Title = "M3OWl Hub",
     SubTitle = "by K 1 R $ and 1x1x1x1x1x1",
     SaveFolder = "M3Ow.json"
 })
