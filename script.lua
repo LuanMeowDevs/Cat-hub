@@ -12,7 +12,7 @@ local Window = WindUI:CreateWindow({
 Window:EditOpenButton({
     Title = "🪐Saturn Hub🪐",
     CornerRadius = UDim.new(0, 10),
-    Draggable = false
+    Draggable = true
 });
 local Tabs = {
 	MainTab = Window:Tab({
@@ -384,12 +384,407 @@ end;
 end;
 (getgenv()).Load();
 if game.PlaceId == 2753915549 or game.PlaceId == 85211729168715 then
-    World1 = true;
+	World1 = true;
 elseif game.PlaceId == 4442272183 or game.PlaceId == 79091703265657 then
-    World2 = true;
+	World2 = true;
 elseif game.PlaceId == 7449423635 or game.PlaceId == 100117331123089 then
-    World3 = true;
+	World3 = true;
 end;
+-- ======================================================
+-- [M3Ow SYSTEMS] Merged from M3Ow Hub V1
+-- ======================================================
+
+-- SAVE SYSTEM (M3Ow)
+local _M3HttpService = game:GetService("HttpService")
+local _M3FolderName = "Saturn_M3Ow_Save"
+local _M3FileName = "Settings.json"
+local _M3FullPath = _M3FolderName .. "/" .. _M3FileName
+if makefolder and not isfolder(_M3FolderName) then makefolder(_M3FolderName) end
+M3SaveData = M3SaveData or {}
+function M3SaveSettings()
+    if not writefile then return false end
+    pcall(function()
+        writefile(_M3FullPath, _M3HttpService:JSONEncode(M3SaveData))
+    end)
+end
+function M3LoadSettings()
+    if not (isfile and isfile(_M3FullPath)) then return end
+    local ok, res = pcall(function()
+        return _M3HttpService:JSONDecode(readfile(_M3FullPath))
+    end)
+    if ok and res then M3SaveData = res end
+end
+function M3GetSetting(name, default)
+    return M3SaveData[name] ~= nil and M3SaveData[name] or default
+end
+M3LoadSettings()
+
+-- IMPROVED BRINGENEMY (TweenService-based, M3Ow)
+local _M3TweenService = game:GetService("TweenService")
+local _M3TweenInfoBring = TweenInfo.new(0.45, Enum.EasingStyle.Linear, Enum.EasingDirection.Out)
+M3BringRange = M3BringRange or 235
+M3MaxBringMobs = M3MaxBringMobs or 3
+
+local function M3IsRaidMob(mob)
+    local n = mob.Name:lower()
+    if n:find("raid") or n:find("microchip") or n:find("island") then return true end
+    if mob:GetAttribute("IsRaid") or mob:GetAttribute("RaidMob") or mob:GetAttribute("IsBoss") then return true end
+    local hum = mob:FindFirstChild("Humanoid")
+    if hum and hum.WalkSpeed == 0 then return true end
+    return false
+end
+
+function M3BringEnemy(targetPos)
+    local char = game.Players.LocalPlayer.Character
+    local hrp = char and char:FindFirstChild("HumanoidRootPart")
+    if not hrp then return end
+    pcall(function() sethiddenproperty(game.Players.LocalPlayer, "SimulationRadius", math.huge) end)
+    local tPos = targetPos or hrp.Position
+    local count = 0
+    for _, mob in ipairs(workspace.Enemies:GetChildren()) do
+        if count >= M3MaxBringMobs then break end
+        local hum = mob:FindFirstChild("Humanoid")
+        local root = mob:FindFirstChild("HumanoidRootPart")
+        if hum and root and hum.Health > 0 and not M3IsRaidMob(mob) then
+            local dist = (root.Position - tPos).Magnitude
+            if dist <= M3BringRange and not root:GetAttribute("M3Tweening") then
+                count += 1
+                root:SetAttribute("M3Tweening", true)
+                local tween = _M3TweenService:Create(root, _M3TweenInfoBring, {CFrame = CFrame.new(tPos)})
+                tween:Play()
+                tween.Completed:Once(function()
+                    if root then root:SetAttribute("M3Tweening", false) end
+                end)
+            end
+        end
+    end
+end
+
+-- AUTO BERRY
+M3AutoBerry = false
+spawn(function()
+    while task.wait(0.1) do
+        if M3AutoBerry then
+            pcall(function()
+                local cs = game:GetService("CollectionService")
+                local tagged = cs:GetTagged("BerryBush")
+                for _, bush in pairs(tagged) do
+                    for _, child in pairs(bush:GetChildren()) do
+                        if child:FindFirstChild("ProximityPrompt") then
+                            game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = child.WorldPivot
+                            fireproximityprompt(child.ProximityPrompt, math.huge)
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- AUTO ACTIVE CORES (Haki Colors)
+M3AutoActiveCores = false
+local function M3VaildColor(part)
+    return part and part.BrickColor and tostring(part.BrickColor) == "Lime green"
+end
+local function M3HakiCalculate(part)
+    local e = {["Really red"]="Pure Red", Oyster="Snow White", ["Hot pink"]="Winter Sky"}
+    return part and part.BrickColor and e[tostring(part.BrickColor)]
+end
+local function M3AuraSkin(name)
+    pcall(function()
+        local net = game:GetService("ReplicatedStorage"):WaitForChild("Modules"):WaitForChild("Net")
+        net:WaitForChild("RF/FruitCustomizerRF"):InvokeServer({StorageName=name, Type="AuraSkin", Context="Equip"})
+    end)
+end
+spawn(function()
+    while task.wait(0.1) do
+        if M3AutoActiveCores then
+            pcall(function()
+                local summoner = workspace.Map["Boat Castle"]:FindFirstChild("Summoner")
+                if summoner and summoner:FindFirstChild("Circle") then
+                    for _, e in pairs(summoner.Circle:GetChildren()) do
+                        if e.Name == "Part" then
+                            local inner = e:FindFirstChild("Part")
+                            if not M3VaildColor(inner) then
+                                local colorName = M3HakiCalculate(e)
+                                if colorName then
+                                    M3AuraSkin(colorName)
+                                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = e.CFrame
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- SAFE MODE (M3Ow) - auto stop farm when hp low
+M3SafeMode = false
+spawn(function()
+    while task.wait(0.5) do
+        if M3SafeMode then
+            pcall(function()
+                local char = game.Players.LocalPlayer.Character
+                local hum = char and char:FindFirstChild("Humanoid")
+                if hum and hum.Health > 0 then
+                    local pct = hum.Health / hum.MaxHealth
+                    if pct < 0.3 then
+                        -- Pause all farms briefly
+                        local prev = _G.Settings and _G.Settings.Main and _G.Settings.Main["Auto Farm"]
+                        if prev then
+                            _G.Settings.Main["Auto Farm"] = false
+                            task.wait(3)
+                            _G.Settings.Main["Auto Farm"] = prev
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- AUTO CITIZEN QUEST (Ken V2 - World 3)
+M3CitizenQuest = false
+spawn(function()
+    while task.wait(0.1) do
+        if M3CitizenQuest then
+            pcall(function()
+                local plr = game.Players.LocalPlayer
+                local replicated = game:GetService("ReplicatedStorage")
+                local Lv = plr.Data.Level.Value
+                if Lv >= 1800 then
+                    local prog = replicated.Remotes.CommF_:InvokeServer("CitizenQuestProgress")
+                    if type(prog) == "table" and prog.KilledBandits == false then
+                        local quest = plr.PlayerGui.Main.Quest
+                        if quest.Visible and string.find(quest.Container.QuestTitle.Title.Text, "Forest Pirate") then
+                            for _, e in pairs(workspace.Enemies:GetChildren()) do
+                                if e.Name == "Forest Pirate" and e:FindFirstChild("Humanoid") and e.Humanoid.Health > 0 then
+                                    plr.Character.HumanoidRootPart.CFrame = e.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
+                                    break
+                                end
+                            end
+                        else
+                            plr.Character.HumanoidRootPart.CFrame = CFrame.new(-12443.8671875, 332.40396118164, -7675.4892578125)
+                            task.wait(1.5)
+                            replicated.Remotes.CommF_:InvokeServer("StartQuest", "CitizenQuest", 1)
+                        end
+                    elseif type(prog) == "table" and prog.KilledBoss == false then
+                        local boss = nil
+                        for _, e in pairs(workspace.Enemies:GetChildren()) do
+                            if e.Name == "Captain Elephant" and e:FindFirstChild("Humanoid") and e.Humanoid.Health > 0 then
+                                boss = e; break
+                            end
+                        end
+                        if boss then
+                            plr.Character.HumanoidRootPart.CFrame = boss.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0)
+                        else
+                            plr.Character.HumanoidRootPart.CFrame = CFrame.new(-13374.889648438, 421.27752685547, -8225.208984375)
+                        end
+                    elseif replicated.Remotes.CommF_:InvokeServer("CitizenQuestProgress", "Citizen") == 2 then
+                        plr.Character.HumanoidRootPart.CFrame = CFrame.new(-12512.138671875, 340.39279174805, -9872.8203125)
+                    end
+                end
+            end)
+        end
+    end
+end)
+
+-- AUTO FISHING (M3Ow - complete system)
+M3AutoFishing = false
+M3AutoBuyBait = false
+M3AutoFishingQuest = false
+M3AutoQuestComplete = false
+M3AutoSellFish = false
+M3SelectedBait = nil
+M3SelectedRod = nil
+spawn(function()
+    local RS = game:GetService("ReplicatedStorage")
+    local function getFishingRemote()
+        local Modules = RS:FindFirstChild("Modules")
+        local Net = Modules and Modules:FindFirstChild("Net")
+        return Net and Net:FindFirstChild("RF/FishingRequest")
+    end
+    local function getJobsRemote()
+        local Modules = RS:FindFirstChild("Modules")
+        local Net = Modules and Modules:FindFirstChild("Net")
+        return Net and Net:FindFirstChild("RF/JobsRequest")
+    end
+    local function getCraftRemote()
+        local Modules = RS:FindFirstChild("Modules")
+        local Net = Modules and Modules:FindFirstChild("Net")
+        return Net and Net:FindFirstChild("RF/CraftRequest")
+    end
+    while task.wait(0.5) do
+        pcall(function()
+            if M3AutoBuyBait and M3SelectedBait then
+                local craftRemote = getCraftRemote()
+                if craftRemote then craftRemote:InvokeServer("Craft", M3SelectedBait, {}) end
+            end
+            if M3AutoFishingQuest then
+                local jobsRemote = getJobsRemote()
+                if jobsRemote then
+                    local pGui = game.Players.LocalPlayer.PlayerGui
+                    local hasQuest = pGui:FindFirstChild("Quest") and pGui.Quest:FindFirstChild("Container")
+                    if not hasQuest then
+                        jobsRemote:InvokeServer("FishingNPC", "Angler", "AskQuest")
+                    end
+                end
+            end
+            if M3AutoQuestComplete then
+                local jobsRemote = getJobsRemote()
+                if jobsRemote then jobsRemote:InvokeServer("FishingNPC", "FinishQuest") end
+            end
+            if M3AutoSellFish then
+                local jobsRemote = getJobsRemote()
+                if jobsRemote then jobsRemote:InvokeServer("FishingNPC", "SellFish") end
+            end
+            if M3AutoFishing then
+                local plr = game.Players.LocalPlayer
+                local char = plr.Character or plr.CharacterAdded:Wait()
+                local hrp = char:FindFirstChild("HumanoidRootPart")
+                if not hrp then return end
+                local equippedTool = char:FindFirstChildOfClass("Tool")
+                if M3SelectedRod and (not equippedTool or equippedTool.Name ~= M3SelectedRod) then
+                    local rodInBag = plr.Backpack:FindFirstChild(M3SelectedRod)
+                    if rodInBag then
+                        char.Humanoid:EquipTool(rodInBag)
+                        equippedTool = rodInBag
+                    end
+                end
+                if equippedTool then
+                    local fishingRemote = getFishingRemote()
+                    if fishingRemote then
+                        local state = equippedTool:GetAttribute("State")
+                        local serverState = equippedTool:GetAttribute("ServerState")
+                        if state == "ReeledIn" or serverState == "ReeledIn" then
+                            local targetPos = hrp.Position + hrp.CFrame.LookVector * 30
+                            targetPos = Vector3.new(targetPos.X, workspace.Terrain:WaterHeight or 0, targetPos.Z)
+                            fishingRemote:InvokeServer("StartCasting")
+                            task.wait(0.1)
+                            fishingRemote:InvokeServer("CastLineAtLocation", targetPos, 100, true)
+                        elseif serverState == "Biting" then
+                            fishingRemote:InvokeServer("Catching", true)
+                            task.wait(0.1)
+                            fishingRemote:InvokeServer("Catch", 1)
+                        end
+                    end
+                end
+            end
+        end)
+    end
+end)
+
+-- HAKI STATES (M3Ow)
+M3SelectStateHaki = "State 0"
+function M3ChangeHaki()
+    local replicated = game:GetService("ReplicatedStorage")
+    local stageMap = {["State 0"]=0, ["State 1"]=1, ["State 2"]=2, ["State 3"]=3, ["State 4"]=4, ["State 5"]=5}
+    local stage = stageMap[M3SelectStateHaki]
+    if stage then
+        replicated.Remotes.CommF_:InvokeServer("ChangeBusoStage", stage)
+    end
+end
+
+-- WALK ON WATER (M3Ow - controlled separately)
+M3WalkOnWater = false
+spawn(function()
+    while task.wait(0.1) do
+        pcall(function()
+            local waterBase = workspace.Map:FindFirstChild("WaterBase-Plane")
+            if waterBase then
+                if M3WalkOnWater then
+                    waterBase.Size = Vector3.new(1000, 112, 1000)
+                else
+                    waterBase.Size = Vector3.new(1000, 80, 1000)
+                end
+            end
+        end)
+    end
+end)
+
+-- STRETCH SCREEN (M3Ow)
+M3StretchScreenActive = false
+function M3StretchScreen()
+    if M3StretchScreenActive then return end
+    M3StretchScreenActive = true
+    local res = 0.65
+    local Camera = workspace.CurrentCamera
+    game:GetService("RunService").RenderStepped:Connect(function()
+        if M3StretchScreenActive then
+            pcall(function()
+                Camera.CFrame = Camera.CFrame * CFrame.new(0,0,0, 1,0,0, 0,res,0, 0,0,1)
+            end)
+        end
+    end)
+end
+
+-- ADVANCED FASTATTACK MODULE (M3Ow)
+spawn(function()
+    local Players = game:GetService("Players")
+    local Player = Players.LocalPlayer
+    local function SafeGet(parent, name)
+        local ok, res = pcall(function() return parent:WaitForChild(name, 3) end)
+        return ok and res or nil
+    end
+    local Modules = SafeGet(game:GetService("ReplicatedStorage"), "Modules")
+    local Net = Modules and SafeGet(Modules, "Net")
+    local RegisterAttack = Net and SafeGet(Net, "RE/RegisterAttack")
+    local RegisterHit = Net and SafeGet(Net, "RE/RegisterHit")
+    if not RegisterAttack or not RegisterHit then return end
+    local M3FA = {Distance=100}
+    local function ProcessM3Enemies(list, folder)
+        local basePart = nil
+        for _, enemy in ipairs(folder:GetChildren()) do
+            local head = enemy:FindFirstChild("Head")
+            if head and enemy:FindFirstChild("Humanoid") and enemy.Humanoid.Health > 0
+            and Player:DistanceFromCharacter(head.Position) < M3FA.Distance
+            and enemy ~= Player.Character then
+                table.insert(list, {enemy, head})
+                basePart = head
+            end
+        end
+        return basePart
+    end
+    local function M3AttackNearest()
+        local enemies = {}
+        local ef = workspace:FindFirstChild("Enemies")
+        local cf = workspace:FindFirstChild("Characters")
+        local p1 = ef and ProcessM3Enemies(enemies, ef)
+        local p2 = cf and ProcessM3Enemies(enemies, cf)
+        local char = Player.Character
+        if not char or #enemies == 0 then return end
+        local tool = char:FindFirstChildOfClass("Tool")
+        if tool and tool:FindFirstChild("LeftClickRemote") then
+            for _, data in ipairs(enemies) do
+                local e = data[1]
+                if e:FindFirstChild("HumanoidRootPart") and char:FindFirstChild("HumanoidRootPart") then
+                    local dir = (e.HumanoidRootPart.Position - char:GetPivot().Position).Unit
+                    pcall(function() tool.LeftClickRemote:FireServer(dir, 1) end)
+                end
+            end
+        else
+            pcall(function() RegisterAttack:FireServer(0) RegisterHit:FireServer(p1 or p2, enemies) end)
+        end
+    end
+    M3FastAttackActive = true
+    while task.wait(0) do
+        if M3FastAttackActive then
+            pcall(function()
+                local char = Player.Character
+                local hum = char and char:FindFirstChild("Humanoid")
+                if not hum or hum.Health <= 0 then return end
+                local tool = char:FindFirstChildOfClass("Tool")
+                if tool and tool.ToolTip ~= "Gun" then M3AttackNearest() end
+            end)
+        end
+    end
+end)
+-- ======================================================
+-- [END M3Ow BACKEND SYSTEMS]
+-- ======================================================
+
 function CheckQuest()
 	MyLevel = (game:GetService("Players")).LocalPlayer.Data.Level.Value;
 	if World1 then
@@ -4388,6 +4783,83 @@ spawn(function()
 		end;
 	end;
 end);
+
+-- [M3Ow] Fishing System
+FishingSection = Tabs.OthersTab:Section({
+	Title = "Auto Fishing (M3Ow)",
+	TextXAlignment = "Left"
+});
+FishingRodInput = Tabs.OthersTab:Input({
+	Title = "Nome da Vara de Pesca",
+	Placeholder = "ex: Fishing Rod",
+	Callback = function(val)
+		M3SelectedRod = val
+	end
+});
+BaitDropdown = Tabs.OthersTab:Dropdown({
+	Title = "Selecionar Isca",
+	Values = {"Basic Bait","Shrimp","Cricket","Firefly","Grub","Squid","Crab"},
+	Default = "Basic Bait",
+	Multi = false,
+	Callback = function(val)
+		M3SelectedBait = val
+	end
+});
+AutoBuyBaitToggle = Tabs.OthersTab:Toggle({
+	Title = "Auto Buy Bait",
+	Desc = "Compra/crafta a isca selecionada",
+	Default = false,
+	Callback = function(state)
+		M3AutoBuyBait = state
+	end
+});
+AutoFishingToggle = Tabs.OthersTab:Toggle({
+	Title = "Auto Fishing",
+	Desc = "Lanca e puxa a vara automaticamente",
+	Default = false,
+	Callback = function(state)
+		M3AutoFishing = state
+	end
+});
+AutoQuestFishingToggle = Tabs.OthersTab:Toggle({
+	Title = "Auto Quest Fishing",
+	Desc = "Pega quest com o NPC Angler",
+	Default = false,
+	Callback = function(state)
+		M3AutoFishingQuest = state
+	end
+});
+AutoCompleteQuestFishingToggle = Tabs.OthersTab:Toggle({
+	Title = "Auto Complete Quest Fishing",
+	Desc = "Entrega a quest automaticamente",
+	Default = false,
+	Callback = function(state)
+		M3AutoQuestComplete = state
+	end
+});
+AutoSellFishToggle = Tabs.OthersTab:Toggle({
+	Title = "Auto Sell Fish",
+	Desc = "Vende os peixes automaticamente",
+	Default = false,
+	Callback = function(state)
+		M3AutoSellFish = state
+	end
+});
+
+-- [M3Ow] Citizen Quest (Ken V2 - Sea 3 Only)
+CitizenQuestSection = Tabs.OthersTab:Section({
+	Title = "Citizen Quest / Ken V2 (Sea 3)",
+	TextXAlignment = "Left"
+});
+CitizenQuestToggle = Tabs.OthersTab:Toggle({
+	Title = "Auto Citizen Quest",
+	Desc = "Completa automaticamente o quest do cidadao (Ken V2)",
+	Default = false,
+	Callback = function(state)
+		M3CitizenQuest = state
+	end
+});
+
 SettingsSection = Tabs.SettingsTab:Section({
 	Title = "Settings",
 	TextXAlignment = "Left"
@@ -4520,6 +4992,52 @@ spawn(function()
 		end;
 	end);
 end);
+
+-- [M3Ow] Extra Settings
+M3OthersSection = Tabs.SettingsTab:Section({
+	Title = "M3Ow Extras",
+	TextXAlignment = "Left"
+});
+HakiStatesDropdown = Tabs.SettingsTab:Dropdown({
+	Title = "Haki Stage",
+	Desc = "Seleciona o estagio do buso haki",
+	Values = {"State 0","State 1","State 2","State 3","State 4","State 5"},
+	Default = "State 0",
+	Multi = false,
+	Callback = function(val)
+		M3SelectStateHaki = val
+	end
+});
+ChangeHakiButton = Tabs.SettingsTab:Button({
+	Title = "Change Haki Stage",
+	Callback = function()
+		M3ChangeHaki()
+	end
+});
+SafeModeToggle = Tabs.SettingsTab:Toggle({
+	Title = "Safe Mode",
+	Desc = "Para o farm automaticamente quando HP < 30%",
+	Default = false,
+	Callback = function(state)
+		M3SafeMode = state
+	end
+});
+AutoActiveCoresToggle = Tabs.SettingsTab:Toggle({
+	Title = "Auto Active Cores (Haki Colors)",
+	Desc = "Ativa os cores do haki no Boat Castle automaticamente",
+	Default = false,
+	Callback = function(state)
+		M3AutoActiveCores = state
+	end
+});
+M3FastAttackToggle = Tabs.SettingsTab:Toggle({
+	Title = "M3Ow Fast Attack (Advanced)",
+	Desc = "Sistema de fast attack avancado com RegisterHit",
+	Default = true,
+	Callback = function(state)
+		M3FastAttackActive = state
+	end
+});
 GraphicSettingSection = Tabs.SettingsTab:Section({
 	Title = "Graphic",
 	TextXAlignment = "Left"
@@ -7089,6 +7607,119 @@ BuySanguineArtButton = Tabs.ShopTab:Button({
 	Callback = function()
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuySanguineArt", true);
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuySanguineArt");
+	end
+});
+
+-- [M3Ow] Sword Buying (extended)
+SwordBuyM3Section = Tabs.ShopTab:Section({
+	Title = "Buy Swords (M3Ow)",
+	TextXAlignment = "Left"
+});
+BuyPipeButton = Tabs.ShopTab:Button({
+	Title = "Pipe (100,000 Beli)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Pipe")
+	end
+});
+BuyDualHeadedBladeButton = Tabs.ShopTab:Button({
+	Title = "Dual-Headed Blade (400,000 Beli)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Dual-Headed Blade")
+	end
+});
+BuySoulCaneButton = Tabs.ShopTab:Button({
+	Title = "Soul Cane (750,000 Beli)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Soul Cane")
+	end
+});
+BuyPoleV2Button = Tabs.ShopTab:Button({
+	Title = "Pole v2 (5,000 Fragments)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("ThunderGodTalk")
+	end
+});
+-- [M3Ow] Gun Buying
+GunBuyM3Section = Tabs.ShopTab:Section({
+	Title = "Buy Guns (M3Ow)",
+	TextXAlignment = "Left"
+});
+BuySlinghotButton = Tabs.ShopTab:Button({
+	Title = "Slingshot (5,000 Beli)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Slingshot")
+	end
+});
+BuyMusketButton = Tabs.ShopTab:Button({
+	Title = "Musket (8,000 Beli)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Musket")
+	end
+});
+BuyFlintlockButton = Tabs.ShopTab:Button({
+	Title = "Flintlock (10,500 Beli)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Flintlock")
+	end
+});
+BuyCannonButton = Tabs.ShopTab:Button({
+	Title = "Cannon (100,000 Beli)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyItem","Cannon")
+	end
+});
+BuyKabuchaButton = Tabs.ShopTab:Button({
+	Title = "Kabucha (1,500 Fragments)",
+	Callback = function()
+		local Remote = game:GetService("ReplicatedStorage").Remotes.CommF_
+		Remote:InvokeServer("BlackbeardReward","Slingshot","1")
+		Remote:InvokeServer("BlackbeardReward","Slingshot","2")
+	end
+});
+BuyBizarreRifleButton = Tabs.ShopTab:Button({
+	Title = "Bizarre Rifle (250 Ectoplasm)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Ectoplasm","Buy",1)
+	end
+});
+-- [M3Ow] Misc Shop
+MiscShopM3Section = Tabs.ShopTab:Section({
+	Title = "Misc Shop (M3Ow)",
+	TextXAlignment = "Left"
+});
+BuyRefundStatButton = Tabs.ShopTab:Button({
+	Title = "Buy Refund Stat (2500F)",
+	Callback = function()
+		local Remote = game:GetService("ReplicatedStorage").Remotes.CommF_
+		Remote:InvokeServer("BlackbeardReward","Refund","1")
+		Remote:InvokeServer("BlackbeardReward","Refund","2")
+	end
+});
+BuyRerollRaceButton = Tabs.ShopTab:Button({
+	Title = "Buy Reroll Race (3000F)",
+	Callback = function()
+		local Remote = game:GetService("ReplicatedStorage").Remotes.CommF_
+		Remote:InvokeServer("BlackbeardReward","Reroll","1")
+		Remote:InvokeServer("BlackbeardReward","Reroll","2")
+	end
+});
+BuyDracoButton = Tabs.ShopTab:Button({
+	Title = "Buy Draco Race",
+	Callback = function()
+		local args = {{["NPC"]="Dragon Wizard",["Command"]="DragonRace"}}
+		game:GetService("ReplicatedStorage").Modules.Net:FindFirstChild("RF/InteractDragonQuest"):InvokeServer(unpack(args))
+	end
+});
+BuyGhoulRaceButton = Tabs.ShopTab:Button({
+	Title = "Buy Ghoul Race",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Ectoplasm","Change",4)
+	end
+});
+BuyCyborgRaceButton = Tabs.ShopTab:Button({
+	Title = "Buy Cyborg Race (2500F)",
+	Callback = function()
+		game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CyborgTrainer","Buy")
 	end
 });
 SwordShopSection = Tabs.ShopTab:Section({
@@ -9815,6 +10446,43 @@ RemoveLavaButton = Tabs.MiscTab:Button({
 		end;
 	end
 });
+
+-- [M3Ow] Misc additions
+StretchScreenSection = Tabs.MiscTab:Section({
+	Title = "Screen",
+	TextXAlignment = "Left"
+});
+StretchScreenButton = Tabs.MiscTab:Button({
+	Title = "Stretch Screen",
+	Desc = "Altera o aspect ratio da camera",
+	Callback = function()
+		M3StretchScreen()
+	end
+});
+
+-- [M3Ow] Walk On Water (M3Ow method - WaterBase resize)
+M3WalkOnWaterToggle = Tabs.MiscTab:Toggle({
+	Title = "Walk On Water (M3Ow)",
+	Desc = "Redimensiona o WaterBase para andar na agua (metodo alternativo)",
+	Default = false,
+	Callback = function(state)
+		M3WalkOnWater = state
+	end
+});
+
+-- [M3Ow] Auto Berry
+AutoBerrySection = Tabs.MiscTab:Section({
+	Title = "Berry",
+	TextXAlignment = "Left"
+});
+AutoBerryToggle = Tabs.MiscTab:Toggle({
+	Title = "Auto Farm Berry Bush",
+	Desc = "Coleta berries automaticamente",
+	Default = false,
+	Callback = function(state)
+		M3AutoBerry = state
+	end
+});
 ServerTabSection = Tabs.ServerTab:Section({
 	Title = "Server",
 	TextXAlignment = "Left"
@@ -9971,3 +10639,105 @@ spawn(function()
 		end);
 	end;
 end);
+
+-- [M3Ow] Extra Status Paragraphs
+M3StatusSection = Tabs.ServerTab:Section({
+	Title = "M3Ow Status",
+	TextXAlignment = "Left"
+});
+EliteHunterProgressParagraph = Tabs.ServerTab:Paragraph({
+	Title = "Elite Hunter Progress",
+	Desc = "Carregando..."
+});
+BoneCountParagraph = Tabs.ServerTab:Paragraph({
+	Title = "Bone Count",
+	Desc = "Carregando..."
+});
+CakePrinceKillsParagraph = Tabs.ServerTab:Paragraph({
+	Title = "Cake Prince Kills",
+	Desc = "Carregando..."
+});
+RipIndraStatusM3 = Tabs.ServerTab:Paragraph({
+	Title = "Rip Indra",
+	Desc = "Status: N/A"
+});
+DoughKingStatusM3 = Tabs.ServerTab:Paragraph({
+	Title = "Dough King",
+	Desc = "Status: N/A"
+});
+LegendarySwordM3 = Tabs.ServerTab:Paragraph({
+	Title = "Legendary Sword Dealer",
+	Desc = "Status: N/A"
+});
+spawn(function()
+	while task.wait(0.5) do
+		pcall(function()
+			local prog = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("EliteHunter","Progress")
+			EliteHunterProgressParagraph:SetDesc("Killed: " .. tostring(prog))
+		end)
+	end
+end)
+spawn(function()
+	while task.wait(0.5) do
+		pcall(function()
+			local bones = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("Bones","Check")
+			BoneCountParagraph:SetDesc("Bones: " .. tostring(bones))
+		end)
+	end
+end)
+spawn(function()
+	while task.wait(0.5) do
+		pcall(function()
+			local response = game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("CakePrinceSpawner")
+			if type(response) == "string" then
+				local len = string.len(response)
+				if len == 88 then CakePrinceKillsParagraph:SetDesc("Kills: " .. string.sub(response, 39, 41))
+				elseif len == 87 then CakePrinceKillsParagraph:SetDesc("Kills: " .. string.sub(response, 39, 40))
+				elseif len == 86 then CakePrinceKillsParagraph:SetDesc("Kills: " .. string.sub(response, 39, 39))
+				else CakePrinceKillsParagraph:SetDesc("Cake Prince Ativo") end
+			end
+		end)
+	end
+end)
+spawn(function()
+	while task.wait(0.3) do
+		pcall(function()
+			local rs = game:GetService("ReplicatedStorage")
+			local ws = game:GetService("Workspace").Enemies
+			if rs:FindFirstChild("rip_indra True Form") or ws:FindFirstChild("rip_indra") then
+				RipIndraStatusM3:SetDesc("Status: ATIVO")
+			else
+				RipIndraStatusM3:SetDesc("Status: Nao encontrado")
+			end
+		end)
+	end
+end)
+spawn(function()
+	while task.wait(0.3) do
+		pcall(function()
+			local rs = game:GetService("ReplicatedStorage")
+			local ws = game:GetService("Workspace").Enemies
+			if rs:FindFirstChild("Dough King") or ws:FindFirstChild("Dough King") then
+				DoughKingStatusM3:SetDesc("Status: ATIVO")
+			else
+				DoughKingStatusM3:SetDesc("Status: Nao encontrado")
+			end
+		end)
+	end
+end)
+spawn(function()
+	while task.wait(1) do
+		pcall(function()
+			local rs = game:GetService("ReplicatedStorage").Remotes.CommF_
+			if rs:InvokeServer("LegendarySwordDealer","1") then
+				LegendarySwordM3:SetDesc("Shisui disponivel!")
+			elseif rs:InvokeServer("LegendarySwordDealer","2") then
+				LegendarySwordM3:SetDesc("Wando disponivel!")
+			elseif rs:InvokeServer("LegendarySwordDealer","3") then
+				LegendarySwordM3:SetDesc("Saddi disponivel!")
+			else
+				LegendarySwordM3:SetDesc("Nenhuma legendary sword")
+			end
+		end)
+	end
+end)
