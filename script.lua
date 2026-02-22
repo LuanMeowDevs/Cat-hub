@@ -10,7 +10,7 @@ local Window = WindUI:CreateWindow({
     Folder = "Eclipse Lunar Gen4",
     Size = UDim2.fromOffset(520, 300),
     Transparent = true,
-    Theme = "Aqua",
+    Theme = "Dark",
     SideBarWidth = 190,
     HasOutline = false,
 });
@@ -10097,4 +10097,5 @@ spawn(function()
 		end);
 	end;
 end);
+
 
