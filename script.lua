@@ -152,6 +152,7 @@ _G.Settings = {
 		["Auto Farm Material"] = false
 	},
 	Setting = {
+		["Auto Set Team"] = "Marines",
 		["Spin Position"] = false,
 		["Farm Distance"] = 35,
 		["Player Tween Speed"] = 350,
@@ -4515,6 +4516,53 @@ SettingsSection = Tabs.SettingsTab:Section({
 	Title = "Settings",
 	TextXAlignment = "Left"
 });
+local Marines = function()
+	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Marines");
+end;
+local Pirates = function()
+	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates");
+end;
+TeamSection = Tabs.SettingsTab:Section({
+	Title = "Team",
+	TextXAlignment = "Left"
+});
+SetMarinesButton = Tabs.SettingsTab:Button({
+	Title = "Set Team Marines",
+	Desc = "Join Marines team on execute",
+	Callback = function()
+		Marines();
+	end
+});
+SetPiratesButton = Tabs.SettingsTab:Button({
+	Title = "Set Team Pirates",
+	Desc = "Join Pirates team on execute",
+	Callback = function()
+		Pirates();
+	end
+});
+AutoSetTeamSection = Tabs.SettingsTab:Section({
+	Title = "Auto Set Team On Execute",
+	TextXAlignment = "Left"
+});
+local AutoTeamList = {"None", "Marines", "Pirates"};
+AutoSetTeamDropdown = Tabs.SettingsTab:Dropdown({
+	Title = "Auto Set Team",
+	Desc = "Automatically joins chosen team when script executes",
+	Values = AutoTeamList,
+	Value = _G.Settings.Setting["Auto Set Team"] or "None",
+	Callback = function(option)
+		_G.Settings.Setting["Auto Set Team"] = option;
+		(getgenv()).SaveSetting();
+	end
+});
+pcall(function()
+	local autoTeam = _G.Settings.Setting["Auto Set Team"] or "Marines";
+	if autoTeam == "Marines" then
+		Marines();
+	elseif autoTeam == "Pirates" then
+		Pirates();
+	end;
+end);
 SpinPositionToggle = Tabs.SettingsTab:Toggle({
 	Title = "Spin Position",
 	Desc = "Spin Position When Farm",
