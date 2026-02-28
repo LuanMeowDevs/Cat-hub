@@ -16,7 +16,7 @@ end);
 
 local Window = WindUI:CreateWindow({
     Title = "Eclipse Hub",
-    Author = "By 1x1x1x1x1x1 And David Baszucki",
+    Author = "By SAAAD And MUTANOZS💚",
     Folder = "Eclipse Lunar Gen4",
     Size = UDim2.fromOffset(520, 300),
     Transparent = true,
@@ -31,112 +31,112 @@ Window:EditOpenButton({
 });
 local Tabs = {
 	InfoTab = Window:Tab({
-		Title = "TAB | DISCORD",
+		Title = "Tab | Discord",
 		Icon = "info",
 		Desc = "Eclipse Hub Discord"
 	}),
 	ServerTab = Window:Tab({
-		Title = "TAB | STATUS AND SERVER",
+		Title = "Tab | Status and Server",
 		Icon = "server",
 		Desc = "Server Status Section"
 	}),
 	SettingsTab = Window:Tab({
-		Title = "TAB | SETTINGS",
+		Title = "Tab | Settings",
 		Icon = "settings",
 		Desc = "Settings Section"
 	}),
 	SeaSettingsTab = Window:Tab({
-		Title = "TAB | SEA SETTINGS",
+		Title = "Tab | Sea Settings",
 		Icon = "cog",
 		Desc = "Sea Settings Section"
 	}),
 	ShopTab = Window:Tab({
-		Title = "TAB | SHOP",
+		Title = "Tab | Shop",
 		Icon = "shopping-cart",
 		Desc = "Shop Section"
 	}),
 	MainTab = Window:Tab({
-		Title = "TAB | MAIN FARM",
+		Title = "Tab | Main Farm",
 		Icon = "house",
 		Desc = "Main Section"
 	}),
 	MultiFarmTab = Window:Tab({
-		Title = "TAB | MULTI FARM",
+		Title = "Tab | Multi Farm",
 		Icon = "layers",
 		Desc = "Multi Farm - Prehistoric Kaitun & Dungeon"
 	}),
 	OthersTab = Window:Tab({
-		Title = "TAB | OTHERS",
+		Title = "Tab | Others",
 		Icon = "inbox",
 		Desc = "Farming Section"
 	}),
 	FarmingHopTab = Window:Tab({
-		Title = "TAB | FARMING AND HOP",
+		Title = "Tab | Farming and Hop",
 		Icon = "zap",
 		Desc = "Quest Farms & Server Hop"
 	}),
 	ItemsTab = Window:Tab({
-		Title = "TAB | ITEMS",
+		Title = "Tab | Items",
 		Icon = "box",
 		Desc = "Items Section"
 	}),
 	FruitTab = Window:Tab({
-		Title = "TAB | FRUIT",
+		Title = "Tab | Fruit",
 		Icon = "vegan",
 		Desc = "Fruit Section"
 	}),
 	RaidTab = Window:Tab({
-		Title = "TAB | RAID",
+		Title = "Tab | Raid",
 		Icon = "door-open",
 		Desc = "Raid Section"
 	}),
 	CombatTab = Window:Tab({
-		Title = "TAB | COMBAT",
+		Title = "Tab | Combat",
 		Icon = "sword",
 		Desc = "Combat Section"
 	}),
 	RaceTab = Window:Tab({
-		Title = "TAB | RACE",
+		Title = "Tab | Race",
 		Icon = "bot",
 		Desc = "Race Section"
 	}),
 	DragonDojoTab = Window:Tab({
-		Title = "TAB | DRAGON DOJO",
+		Title = "Tab | Dragon Dojo",
 		Icon = "shield",
 		Desc = "Dragon Dojo Section"
 	}),
 	SeaEventTab = Window:Tab({
-		Title = "TAB | SEA EVENT",
+		Title = "Tab | Sea Event",
 		Icon = "anchor",
 		Desc = "Sea Event Section"
 	}),
 	SeaStackTab = Window:Tab({
-		Title = "TAB | ISLANDS",
+		Title = "Tab | Islands",
 		Icon = "waves",
 		Desc = "Islands Section"
 	}),
 	EspTab = Window:Tab({
-		Title = "TAB | ESP",
+		Title = "Tab | Esp",
 		Icon = "scan-eye",
 		Desc = "Esp Section"
 	}),
 	TeleportTab = Window:Tab({
-		Title = "TAB | TELEPORT",
+		Title = "Tab | Teleport",
 		Icon = "map-pinned",
 		Desc = "Teleport Section"
 	}),
 	LocalPlayerTab = Window:Tab({
-		Title = "TAB | LOCAL PLAYER",
+		Title = "Tab | Local Player",
 		Icon = "user",
 		Desc = "Local Player Section"
 	}),
 	StatsTab = Window:Tab({
-		Title = "TAB | STATS",
+		Title = "Tab | Stats",
 		Icon = "chart-no-axes-column",
 		Desc = "Stats Section"
 	}),
 	MiscTab = Window:Tab({
-		Title = "TAB | MISC",
+		Title = "Tab | Misc",
 		Icon = "layout-grid",
 		Desc = "Misc Section"
 	}),
@@ -175,23 +175,23 @@ Tabs.InfoTab:Paragraph({
 });
 Tabs.InfoTab:Paragraph({
 	Title = "🌐 Discord Server",
-	Desc = "Join our community for updates, support and more!\nLink: discord.gg/QwBHNFyzPq"
+	Desc = "Join our community for updates, support and more!\nLink: discord.gg/f4K5sDwKkn"
 });
 Tabs.InfoTab:Button({
 	Title = "Join Eclipse Community Discord",
 	Desc = "Click to open the Discord invite link",
 	Callback = function()
-		setclipboard("https://discord.gg/QwBHNFyzPq");
+		setclipboard("https://discord.gg/f4K5sDwKkn");
 		game:GetService("StarterGui"):SetCore("SendNotification", {
 			Title = "Eclipse Hub",
-			Text = "Discord link copied to clipboard!\ndiscord.gg/QwBHNFyzPq",
+			Text = "Discord link copied to clipboard!\ndiscord.gg/f4K5sDwKkn",
 			Duration = 5
 		});
 	end
 });
 Tabs.InfoTab:Paragraph({
 	Title = "📋 Credits",
-	Desc = "Dev: 1x1x1x1x1x1\nOwner: David Basuki\n\nEclipse Hub Gen4 — Blox Fruits"
+	Desc = "Dev: SAAAD\nOwner: MUTANOZS💚\n\nEclipse Hub Gen4 — Blox Fruits"
 });
 -- ========================================
 -- FARMING AND HOP TAB
@@ -3173,7 +3173,7 @@ DiscordServerParagraph = Tabs.MainTab:Paragraph({
 		{
 			Title = "Copy Link",
 			Callback = function()
-				setclipboard("https://discord.gg/BJVQqMtZ2A");
+				setclipboard("https://discord.gg/f4K5sDwKkn");
 				WindUI:Notify({
 					Title = "Notification",
 					Content = "Copied",
