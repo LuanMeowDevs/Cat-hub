@@ -74,11 +74,6 @@ local Tabs = {
 		Icon = "zap",
 		Desc = "Quest Farms & Server Hop"
 	}),
-	ItemsTab = Window:Tab({
-		Title = "Tab | Items",
-		Icon = "box",
-		Desc = "Items Section"
-	}),
 	FruitTab = Window:Tab({
 		Title = "Tab | Fruit",
 		Icon = "vegan",
@@ -742,6 +737,61 @@ spawn(function()
 	end;
 end);
 
+local _FHSkullGuitarMat = false;
+local _skullGuitarSection = Tabs.FarmingHopTab:Section({
+	Title = " Material Farm",
+	TextXAlignment = "Left"
+});
+Tabs.FarmingHopTab:Toggle({
+	Title = "Auto Farm Material Skull Guitar",
+	Desc = "Detecta e farma: 250 Ectoplasma (Haunted Ship Sea 2), 500 Bones (Haunted Castle Sea 2), 1 Dark Fragment (Darkbeard Sea 2). Ordem: Darkbeard > Ectoplasma > Ossos.",
+	Value = false,
+	Callback = function(state)
+		_FHSkullGuitarMat = state;
+		if _G.Settings and _G.Settings.FarmHop then _G.Settings.FarmHop["Auto Skull Guitar Mat"] = state; (getgenv()).SaveSetting(); end;
+	end
+});
+spawn(function()
+	while wait(0.5) do
+		pcall(function()
+			if not _FHSkullGuitarMat or not World2 then return; end;
+			local plr = game.Players.LocalPlayer;
+			local hasEcto  = CheckItemCount and CheckItemCount("Ectoplasm", 250);
+			local hasBones = CheckItemCount and CheckItemCount("Bone", 500);
+			local hasFrag  = CheckItemCount and CheckItemCount("Dark Fragment", 1);
+			if not hasFrag then
+				local mob = GetConnectionEnemies("Darkbeard");
+				if mob then
+					FHNotify("Skull Guitar", "Matando Darkbeard...", 3);
+					repeat wait(); G.Kill(mob, _FHSkullGuitarMat);
+					until not _FHSkullGuitarMat or not mob.Parent or mob.Humanoid.Health <= 0;
+				else
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(3798.4575195313, 13.826690673828, -3399.806640625);
+				end;
+			elseif not hasEcto then
+				local mob = workspace.Enemies:FindFirstChild("Zombie") or workspace.Enemies:FindFirstChild("Demonic Soul") or workspace.Enemies:FindFirstChild("Cursed Skeleton");
+				if mob then
+					repeat wait(); G.Kill(mob, _FHSkullGuitarMat);
+					until not _FHSkullGuitarMat or not mob.Parent or mob.Humanoid.Health <= 0;
+				else
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(3898, 22, -4100);
+				end;
+			elseif not hasBones then
+				local mob = workspace.Enemies:FindFirstChild("Possessed Mummy") or workspace.Enemies:FindFirstChild("Reaper") or workspace.Enemies:FindFirstChild("Cursed Skeleton");
+				if mob then
+					repeat wait(); G.Kill(mob, _FHSkullGuitarMat);
+					until not _FHSkullGuitarMat or not mob.Parent or mob.Humanoid.Health <= 0;
+				else
+					game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = CFrame.new(5000, 22, -3200);
+				end;
+			else
+				_FHSkullGuitarMat = false;
+				FHNotify("Skull Guitar", "Todos os materiais coletados!", 6);
+			end;
+		end);
+	end;
+end);
+
 -- Tyrant Of The Skies (separado, no final)
 pcall(function()
 	game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("SetTeam", "Pirates");
@@ -784,6 +834,14 @@ _G.Settings = {
 		["Auto Kill Dough King"] = false,
 		["Selected Material"] = nil,
 		["Auto Farm Material"] = false
+	},
+	Multi = {
+		["Auto Fully Volcanic"] = false,
+		["Auto Reset After Complete"] = false,
+		["Auto Collect Egg"] = false,
+		["Auto Collect Bone"] = false,
+		["Auto Bounty M1"] = false,
+		["Auto Farm Bounty"] = false,
 	},
 	Setting = {
 		["Auto Set Team"] = "Marines",
@@ -838,6 +896,8 @@ _G.Settings = {
 		["Auto Hallow Scythe"] = false,
 		["Auto Warden Sword"] = false,
 		["Auto Cursed Dual Katana"] = false,
+		["Auto CDK"] = false,
+		["Auto Yama CDK"] = false,
 		["Auto Yama"] = false,
 		["Auto Tushita"] = false,
 		["Auto Canvander"] = false,
@@ -925,6 +985,8 @@ _G.Settings = {
 		["Set Azure Ember"] = 20,
 		["Auto Trade Azure Ember"] = false,
 		["Tween To Mirage Island"] = false,
+		["Auto Find Mirage"] = false,
+		["Auto Blue Gear"] = false,
 		["Teleport To Advanced Fruit Dealer"] = false,
 		["Auto Attack Seabeasts"] = false,
 		["Summon Prehistoric Island"] = false,
@@ -1001,7 +1063,8 @@ _G.Settings = {
 		["Auto Rip Indra"] = false,
 		["Auto Marine Coat"] = false,
 		["Auto Swan Coat"] = false,
-		["Auto God Chalice"] = false
+		["Auto God Chalice"] = false,
+		["Auto Skull Guitar Mat"] = false
 	}
 };
 (getgenv()).Load = function()
@@ -1690,17 +1753,13 @@ function CheckQuest()
 			NameMon = "Skull Slayer";
 			PosQ = CFrame.new(-16668.03, 105.32, 1568.60);
 			PosM = CFrame.new(-16709.49, 419.68, 1751.09);
-		-- SUBMERGED ISLAND (Level 2600-2800+)
-		-- Vai ate o Submarine Worker NPC e usa dialogo pra entrar na ilha
+		-- SUBMERGED ISLAND (Level 2700-2800+)
 		elseif I >= 2700 and I <= 2749 then
 			Mon = "Drowned Pirate";
 			Qdata = 1;
 			Qname = "SubmergedQuest1";
 			NameMon = "Drowned Pirate";
-			-- NPC Submarine Worker fica proximo a Tiki Outpost
-			local _SUBMARINE_WORKER_CF = CFrame.new(-16417.6, 74.26, 1811.3);
-			local _SUBMERGED_QUEST_CF  = CFrame.new(-16490.18, 55.77, 1768.44);
-			PosQ = _SUBMERGED_QUEST_CF;
+			PosQ = CFrame.new(-16490.18, 55.77, 1768.44);
 			PosM = CFrame.new(-16480.00, -85.00, 1740.00);
 			if _G.Settings.Main["Auto Farm"] then
 				pcall(function()
@@ -1708,12 +1767,22 @@ function CheckQuest()
 					local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
 					if not hrp then return; end;
 					if hrp.Position.Y > -30 then
-						hrp.CFrame = _SUBMARINE_WORKER_CF;
-						task.wait(0.8);
+						local _SUBMARINE_WORKER_CF = CFrame.new(-16417.6, 74.26, 1811.3);
+						TweenPlayer(_SUBMARINE_WORKER_CF);
+						local timeout = 0;
+						repeat task.wait(0.1); timeout = timeout + 0.1; until (hrp.Position - _SUBMARINE_WORKER_CF.Position).Magnitude < 15 or timeout > 8;
 						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
-						task.wait(0.5);
+						task.wait(0.8);
 						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
-						task.wait(1);
+						task.wait(1.5);
+						if hrp.Position.Y > -30 then
+							hrp.CFrame = _SUBMARINE_WORKER_CF;
+							task.wait(0.5);
+							game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
+							task.wait(0.8);
+							game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
+							task.wait(1.5);
+						end;
 					end;
 				end);
 			end;
@@ -1722,9 +1791,7 @@ function CheckQuest()
 			Qdata = 2;
 			Qname = "SubmergedQuest1";
 			NameMon = "Lurker";
-			local _SUBMARINE_WORKER_CF2 = CFrame.new(-16417.6, 74.26, 1811.3);
-			local _SUBMERGED_QUEST_CF2  = CFrame.new(-16490.18, 55.77, 1768.44);
-			PosQ = _SUBMERGED_QUEST_CF2;
+			PosQ = CFrame.new(-16490.18, 55.77, 1768.44);
 			PosM = CFrame.new(-16420.00, -90.00, 1700.00);
 			if _G.Settings.Main["Auto Farm"] then
 				pcall(function()
@@ -1732,12 +1799,22 @@ function CheckQuest()
 					local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
 					if not hrp then return; end;
 					if hrp.Position.Y > -30 then
-						hrp.CFrame = _SUBMARINE_WORKER_CF2;
-						task.wait(0.8);
+						local _SUBMARINE_WORKER_CF2 = CFrame.new(-16417.6, 74.26, 1811.3);
+						TweenPlayer(_SUBMARINE_WORKER_CF2);
+						local timeout = 0;
+						repeat task.wait(0.1); timeout = timeout + 0.1; until (hrp.Position - _SUBMARINE_WORKER_CF2.Position).Magnitude < 15 or timeout > 8;
 						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
-						task.wait(0.5);
+						task.wait(0.8);
 						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
-						task.wait(1);
+						task.wait(1.5);
+						if hrp.Position.Y > -30 then
+							hrp.CFrame = _SUBMARINE_WORKER_CF2;
+							task.wait(0.5);
+							game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
+							task.wait(0.8);
+							game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
+							task.wait(1.5);
+						end;
 					end;
 				end);
 			end;
@@ -1746,9 +1823,7 @@ function CheckQuest()
 			Qdata = 2;
 			Qname = "SubmergedQuest2";
 			NameMon = "Sea Raider";
-			local _SUBMARINE_WORKER_CF3 = CFrame.new(-16417.6, 74.26, 1811.3);
-			local _SUBMERGED_QUEST_CF3  = CFrame.new(-16490.18, 55.77, 1768.44);
-			PosQ = _SUBMERGED_QUEST_CF3;
+			PosQ = CFrame.new(-16490.18, 55.77, 1768.44);
 			PosM = CFrame.new(-16380.00, -95.00, 1680.00);
 			if _G.Settings.Main["Auto Farm"] then
 				pcall(function()
@@ -1756,12 +1831,22 @@ function CheckQuest()
 					local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
 					if not hrp then return; end;
 					if hrp.Position.Y > -30 then
-						hrp.CFrame = _SUBMARINE_WORKER_CF3;
-						task.wait(0.8);
+						local _SUBMARINE_WORKER_CF3 = CFrame.new(-16417.6, 74.26, 1811.3);
+						TweenPlayer(_SUBMARINE_WORKER_CF3);
+						local timeout = 0;
+						repeat task.wait(0.1); timeout = timeout + 0.1; until (hrp.Position - _SUBMARINE_WORKER_CF3.Position).Magnitude < 15 or timeout > 8;
 						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
-						task.wait(0.5);
+						task.wait(0.8);
 						game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
-						task.wait(1);
+						task.wait(1.5);
+						if hrp.Position.Y > -30 then
+							hrp.CFrame = _SUBMARINE_WORKER_CF3;
+							task.wait(0.5);
+							game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
+							task.wait(0.8);
+							game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
+							task.wait(1.5);
+						end;
 					end;
 				end);
 			end;
@@ -5222,38 +5307,42 @@ Tabs.MultiFarmTab:Dropdown({
 });
 
 Tabs.MultiFarmTab:Toggle({
-	Title = "Blox Fruits: Fully Volcanic Island",
+	Title = "Auto Fully Volcanic",
 	Desc = "Compra barco na Tiki, navega ate Volcanic Island no mar 6, inicia Raid, tampa buracos de lava e mata Aura Golems. Sea 3.",
 	Value = false,
 	Callback = function(state)
 		_G.FullyVolcanicActive = state;
+		if _G.Settings and _G.Settings.Multi then _G.Settings.Multi["Auto Fully Volcanic"] = state; (getgenv()).SaveSetting(); end;
 		if state then
 			task.spawn(_volcanicMainLoop);
 		end;
 	end
 });
 Tabs.MultiFarmTab:Toggle({
-	Title = "Blox Fruits: Reset after completing volcanic",
-	Desc = "Envia notificacao e auto reseta 10 segundos apos completar a Volcanic Island.",
+	Title = "Auto Reset After Complete",
+	Desc = "Espera 10 segundos e reseta automaticamente quando a Volcanic Island for completada.",
 	Value = false,
 	Callback = function(state)
 		_G.VolcanicAutoReset = state;
+		if _G.Settings and _G.Settings.Multi then _G.Settings.Multi["Auto Reset After Complete"] = state; (getgenv()).SaveSetting(); end;
 	end
 });
 Tabs.MultiFarmTab:Toggle({
-	Title = "Blox Fruits: Auto Collect Egg",
+	Title = "Auto Collect Egg",
 	Desc = "Coleta os Eggs que spawnam apos completar a Volcanic Island, antes de auto resetar.",
 	Value = false,
 	Callback = function(state)
 		_G.VolcanicCollectEgg = state;
+		if _G.Settings and _G.Settings.Multi then _G.Settings.Multi["Auto Collect Egg"] = state; (getgenv()).SaveSetting(); end;
 	end
 });
 Tabs.MultiFarmTab:Toggle({
-	Title = "Blox Fruits: Auto Collect Bone",
+	Title = "Auto Collect Bone",
 	Desc = "Coleta os ossos que caem apos completar a ilha. Funciona apos coletar Egg e antes do auto reset.",
 	Value = false,
 	Callback = function(state)
 		_G.VolcanicCollectBone = state;
+		if _G.Settings and _G.Settings.Multi then _G.Settings.Multi["Auto Collect Bone"] = state; (getgenv()).SaveSetting(); end;
 	end
 });
 
@@ -5261,6 +5350,95 @@ local _dungeonSection = Tabs.MultiFarmTab:Section({
 	Title = "DUNGEON KAITUN",
 	TextXAlignment = "Left"
 });
+
+local _bountySection = Tabs.MultiFarmTab:Section({
+	Title = "BOUNTY / BERRY",
+	TextXAlignment = "Left"
+});
+
+_G.AutoBountyM1 = false;
+_G.AutoFarmBounty = false;
+_G._bountyHopTimer = 0;
+
+Tabs.MultiFarmTab:Toggle({
+	Title = "Auto Bounty M1 Fruit",
+	Desc = "Equipa fruta e usa M1 contra players para ganhar bounty.",
+	Value = false,
+	Callback = function(state)
+		_G.AutoBountyM1 = state;
+		if _G.Settings and _G.Settings.Multi then _G.Settings.Multi["Auto Bounty M1"] = state; (getgenv()).SaveSetting(); end;
+	end
+});
+spawn(function()
+	while wait(0.2) do
+		pcall(function()
+			if _G.AutoBountyM1 then
+				local plr = game.Players.LocalPlayer;
+				local char = plr.Character;
+				if not char then return; end;
+				local hrp = char:FindFirstChild("HumanoidRootPart");
+				if not hrp then return; end;
+				for _, tool in ipairs(plr.Backpack:GetChildren()) do
+					if tool:IsA("Tool") and tool.ToolTip == "Fruit" then
+						char.Humanoid:EquipTool(tool);
+						break;
+					end;
+				end;
+				for _, op in pairs(game.Players:GetPlayers()) do
+					if op ~= plr and op.Character and op.Character:FindFirstChild("HumanoidRootPart") and op.Character:FindFirstChildOfClass("Humanoid") and op.Character.Humanoid.Health > 0 then
+						TweenPlayer(op.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3));
+						task.wait(0.05);
+						Attack();
+					end;
+				end;
+			end;
+		end);
+	end;
+end);
+
+Tabs.MultiFarmTab:Toggle({
+	Title = "Auto Farm Bounty",
+	Desc = "Teleporta para todos os players com fruta equipada e troca de servidor a cada 3 minutos.",
+	Value = false,
+	Callback = function(state)
+		_G.AutoFarmBounty = state;
+		_G._bountyHopTimer = os.time();
+		if _G.Settings and _G.Settings.Multi then _G.Settings.Multi["Auto Farm Bounty"] = state; (getgenv()).SaveSetting(); end;
+	end
+});
+spawn(function()
+	while wait(0.3) do
+		pcall(function()
+			if _G.AutoFarmBounty then
+				local plr = game.Players.LocalPlayer;
+				local char = plr.Character;
+				if not char then return; end;
+				local hrp = char:FindFirstChild("HumanoidRootPart");
+				if not hrp then return; end;
+				for _, tool in ipairs(plr.Backpack:GetChildren()) do
+					if tool:IsA("Tool") and tool.ToolTip == "Fruit" then
+						char.Humanoid:EquipTool(tool);
+						break;
+					end;
+				end;
+				for _, op in pairs(game.Players:GetPlayers()) do
+					if op ~= plr and op.Character and op.Character:FindFirstChild("HumanoidRootPart") and op.Character:FindFirstChildOfClass("Humanoid") and op.Character.Humanoid.Health > 0 then
+						hrp.CFrame = op.Character.HumanoidRootPart.CFrame * CFrame.new(0, 0, 3);
+						task.wait(0.05);
+						Attack();
+					end;
+				end;
+				if os.time() - _G._bountyHopTimer >= 180 then
+					_G._bountyHopTimer = os.time();
+					game:GetService("StarterGui"):SetCore("SendNotification", {Title="TRon Void Hub", Text="Bounty: Trocando servidor...", Duration=4});
+					task.wait(2);
+					local module = (loadstring(game:HttpGet("https://raw.githubusercontent.com/raw-scriptpastebin/FE/main/Server_Hop_Settings")))();
+					module:Teleport(game.PlaceId);
+				end;
+			end;
+		end);
+	end;
+end);
 Tabs.MultiFarmTab:Paragraph({
 	Title = "Dungeon Kaitun",
 	Desc = "Em breve..."
@@ -6322,23 +6500,6 @@ OthersSettingsSection = Tabs.SettingsTab:Section({
 	Title = "Others",
 	TextXAlignment = "Left"
 });
-AutoSetSpawnPointToggle = Tabs.SettingsTab:Toggle({
-	Title = "Auto Set Spawn Point",
-	Value = _G.Settings.Setting["Auto Set Spawn Point"],
-	Callback = function(state)
-		_G.Settings.Setting["Auto Set Spawn Point"] = state;
-		(getgenv()).SaveSetting();
-	end
-});
-spawn(function()
-	while wait() do
-		if _G.Settings.Setting["Auto Set Spawn Point"] then
-			pcall(function()
-				(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("SetSpawnPoint");
-			end);
-		end;
-	end;
-end);
 AutoObservationToggle = Tabs.SettingsTab:Toggle({
 	Title = "Auto Observation",
 	Value = _G.Settings.Setting["Auto Observation"],
@@ -6395,11 +6556,14 @@ spawn(function()
 		end;
 	end;
 end);
-GunSwordSection = Tabs.ItemsTab:Section({
-	Title = "World",
+GunSwordSection = Tabs.FarmingHopTab:Section({
+	Title = " Sea 1 Items",
 	TextXAlignment = "Left"
 });
-AutoSecondSeaToggle = Tabs.ItemsTab:Toggle({
+GunSwordSection = Tabs.FarmingHopTab:Section({
+	Title = "World",
+	TextXAlignment = "Left"
+}); = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Second Sea",
 	Desc = "Function Sea 1 Only",
 	Value = _G.Settings.Items["Auto Second Sea"],
@@ -6409,7 +6573,7 @@ AutoSecondSeaToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoThirdSeaToggle = Tabs.ItemsTab:Toggle({
+AutoThirdSeaToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Third Sea",
 	Desc = "Function Sea 2 Only",
 	Value = _G.Settings.Items["Auto Third Sea"],
@@ -6510,11 +6674,11 @@ spawn(function()
 		end;
 	end;
 end);
-GunSwordSection = Tabs.ItemsTab:Section({
+GunSwordSection = Tabs.FarmingHopTab:Section({
 	Title = "Fighting Style",
 	TextXAlignment = "Left"
 });
-AutoSuperHumanToggle = Tabs.ItemsTab:Toggle({
+AutoSuperHumanToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Super Human",
 	Value = _G.Settings.Items["Auto Super Human"],
 	Callback = function(state)
@@ -6523,7 +6687,7 @@ AutoSuperHumanToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoDeathStepToggle = Tabs.ItemsTab:Toggle({
+AutoDeathStepToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Death Step",
 	Value = _G.Settings.Items["Auto Death Step"],
 	Callback = function(state)
@@ -6532,7 +6696,7 @@ AutoDeathStepToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoSharkmanKarateToggle = Tabs.ItemsTab:Toggle({
+AutoSharkmanKarateToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Sharkman Karate",
 	Value = _G.Settings.Items["Auto Fishman Karate"],
 	Callback = function(state)
@@ -6541,7 +6705,7 @@ AutoSharkmanKarateToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoElectricClawToggle = Tabs.ItemsTab:Toggle({
+AutoElectricClawToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Electric Claw",
 	Value = _G.Settings.Items["Auto Electric Claw"],
 	Callback = function(state)
@@ -6550,7 +6714,7 @@ AutoElectricClawToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoDragonTalonToggle = Tabs.ItemsTab:Toggle({
+AutoDragonTalonToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Dragon Talon",
 	Value = _G.Settings.Items["Auto Dragon Talon"],
 	Callback = function(state)
@@ -6559,7 +6723,7 @@ AutoDragonTalonToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoGodHumanToggle = Tabs.ItemsTab:Toggle({
+AutoGodHumanToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto God Human",
 	Value = _G.Settings.Items["Auto God Human"],
 	Callback = function(state)
@@ -6874,11 +7038,11 @@ spawn(function()
 		end;
 	end);
 end);
-GunSwordSection = Tabs.ItemsTab:Section({
+GunSwordSection = Tabs.FarmingHopTab:Section({
 	Title = "Gun & Sword",
 	TextXAlignment = "Left"
 });
-AutoGetSaberToggle = Tabs.ItemsTab:Toggle({
+AutoGetSaberToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Get Saber",
 	Desc = "Function Sea 1 Only",
 	Value = _G.Settings.Items["Auto Saber"],
@@ -6985,7 +7149,7 @@ spawn(function()
 		end;
 	end;
 end);
-AutoBuddySwordToggle = Tabs.ItemsTab:Toggle({
+AutoBuddySwordToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Buddy Sword",
 	Desc = "Function Sea 3 Only",
 	Value = _G.Settings.Items["Auto Buddy Sword"],
@@ -7358,7 +7522,7 @@ function AutoSoulGuitar()
 		end;
 	end;
 end;
-AutoSoulGuitarToggle = Tabs.ItemsTab:Toggle({
+AutoSoulGuitarToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Soul Guitar",
 	Desc = "Function Sea 3 Only",
 	Value = _G.Settings.Items["Auto Soul Guitar"],
@@ -7377,7 +7541,7 @@ spawn(function()
 		end);
 	end;
 end);
-AutoRengokuToggle = Tabs.ItemsTab:Toggle({
+AutoRengokuToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Rengoku",
 	Desc = "Function Sea 2 Only",
 	Value = _G.Settings.Items["Auto Rengoku"],
@@ -7416,7 +7580,7 @@ spawn(function()
 		end;
 	end);
 end);
-AutoHallowScytheToggle = Tabs.ItemsTab:Toggle({
+AutoHallowScytheToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Hallow Scythe",
 	Desc = "Function Sea 3 Only",
 	Value = _G.Settings.Items["Auto Hallow Scythe"],
@@ -7426,7 +7590,7 @@ AutoHallowScytheToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoWardenSwordToggle = Tabs.ItemsTab:Toggle({
+AutoWardenSwordToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Warden Sword",
 	Desc = "Function Sea 1 Only",
 	Value = _G.Settings.Items["Auto Warden Sword"],
@@ -7436,7 +7600,121 @@ AutoWardenSwordToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoGetYamaToggle = Tabs.ItemsTab:Toggle({
+local _cdkSection = Tabs.FarmingHopTab:Section({
+	Title = " CDK / Yama / Tushita",
+	TextXAlignment = "Left"
+});
+
+_G._CDK_Active = false;
+_G._CDK_YM_Active = false;
+
+Tabs.FarmingHopTab:Toggle({
+	Title = "Auto CDK [Last Quest - Boss]",
+	Desc = "Auto CDK: progride a quest e derrota o Cursed Skeleton Boss. Sea 3.",
+	Value = false,
+	Callback = function(state)
+		_G._CDK_Active = state;
+		if _G.Settings and _G.Settings.Items then _G.Settings.Items["Auto CDK"] = state; (getgenv()).SaveSetting(); end;
+	end
+});
+spawn(function()
+	while wait(0.3) do
+		pcall(function()
+			if _G._CDK_Active then
+				local replicated = game:GetService("ReplicatedStorage");
+				replicated.Remotes.CommF_:InvokeServer("CDKQuest", "Progress", "Good");
+				replicated.Remotes.CommF_:InvokeServer("CDKQuest", "Progress", "Evil");
+				replicated.Remotes.CommF_:InvokeServer("CDKQuest", "StartTrial", "Boss");
+				local plr = game.Players.LocalPlayer;
+				local v = GetConnectionEnemies("Cursed Skeleton Boss");
+				if v then
+					repeat wait();
+						if plr.Character:FindFirstChild("Yama") or plr.Backpack:FindFirstChild("Yama") then EquipWeapon("Yama");
+						elseif plr.Character:FindFirstChild("Tushita") or plr.Backpack:FindFirstChild("Tushita") then EquipWeapon("Tushita"); end;
+						TweenPlayer(v.HumanoidRootPart.CFrame * CFrame.new(0, 5, 0));
+						Attack();
+					until not _G._CDK_Active or not v.Parent or v.Humanoid.Health <= 0;
+				else
+					plr.Character.HumanoidRootPart.CFrame = CFrame.new(-12318.193359375, 601.9518432617188, -6538.662109375);
+					task.wait(0.5);
+					local bossDoor = workspace.Map:FindFirstChild("Turtle") and workspace.Map.Turtle:FindFirstChild("Cursed") and workspace.Map.Turtle.Cursed:FindFirstChild("BossDoor");
+					if bossDoor then
+						plr.Character.HumanoidRootPart.CFrame = bossDoor.CFrame;
+					end;
+				end;
+			end;
+		end);
+	end;
+end);
+
+Tabs.FarmingHopTab:Toggle({
+	Title = "Auto Yama CDK",
+	Desc = "Auto completa todas as etapas da quest Yama para CDK. Sea 3.",
+	Value = false,
+	Callback = function(state)
+		_G._CDK_YM_Active = state;
+		if _G.Settings and _G.Settings.Items then _G.Settings.Items["Auto Yama CDK"] = state; (getgenv()).SaveSetting(); end;
+	end
+});
+spawn(function()
+	while wait(0.3) do
+		pcall(function()
+			if _G._CDK_YM_Active then
+				local replicated = game:GetService("ReplicatedStorage");
+				local plr = game.Players.LocalPlayer;
+				local root = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+				if not root then return; end;
+				if tostring(replicated.Remotes.CommF_:InvokeServer("CDKQuest", "OpenDoor")) ~= "opened" then
+					replicated.Remotes.CommF_:InvokeServer("CDKQuest", "OpenDoor");
+					replicated.Remotes.CommF_:InvokeServer("CDKQuest", "OpenDoor", true);
+				else
+					local progress = replicated.Remotes.CommF_:InvokeServer("CDKQuest", "Progress");
+					if progress and progress["Finished"] == nil then
+						replicated.Remotes.CommF_:InvokeServer("CDKQuest", "StartTrial", "Evil");
+					elseif progress and progress["Finished"] == false then
+						local evilProg = tonumber(progress["Evil"]);
+						if evilProg == -3 then
+							if not workspace.Enemies:FindFirstChild("Forest Pirate") then
+								root.CFrame = CFrame.new(-13223.521484375, 428.1938171386719, -7766.06787109375);
+							else
+								local v = GetConnectionEnemies("Forest Pirate");
+								if v then root.CFrame = v.HumanoidRootPart.CFrame; Attack(); end;
+							end;
+						elseif evilProg == -4 then
+							for _, v in pairs(workspace.Enemies:GetChildren()) do
+								if v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 and v:FindFirstChild("HazeESP") then
+									TweenPlayer(v.HumanoidRootPart.CFrame * Pos);
+									Attack();
+								end;
+							end;
+						elseif evilProg == -5 then
+							local hell = workspace.Map:FindFirstChild("HellDimension");
+							if hell then
+								for _, pp in pairs(hell:GetDescendants()) do
+									if pp:IsA("ProximityPrompt") then fireproximityprompt(pp); end;
+								end;
+								for _, v in pairs(workspace.Enemies:GetChildren()) do
+									if v:FindFirstChild("HumanoidRootPart") and (v.HumanoidRootPart.Position - hell.Spawn.Position).Magnitude <= 300 and v.Humanoid.Health > 0 then
+										TweenPlayer(v.HumanoidRootPart.CFrame * Pos);
+										Attack();
+									end;
+								end;
+							else
+								local sr = GetConnectionEnemies("Soul Reaper");
+								if sr then
+									root.CFrame = sr.HumanoidRootPart.CFrame;
+									Attack();
+								end;
+							end;
+						end;
+					end;
+				end;
+			end;
+		end);
+	end;
+end);
+
+AutoGetYamaToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Get Yama",
 	Desc = "Need 30 Elite Hunter, Function Sea 3 Only",
 	Value = _G.Settings.Items["Auto Yama"],
@@ -7446,7 +7724,7 @@ AutoGetYamaToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoGetYamaHopToggle = Tabs.ItemsTab:Toggle({
+AutoGetYamaHopToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Get Yama Hop",
 	Desc = "Hop If Elite Hunter Not Spawn",
 	Value = _G.Settings.Items["Auto Yama Hop"],
@@ -7456,7 +7734,7 @@ AutoGetYamaHopToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoGetTushitaToggle = Tabs.ItemsTab:Toggle({
+AutoGetTushitaToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Get Tushita",
 	Value = _G.Settings.Items["Auto Tushita"],
 	Callback = function(state)
@@ -7465,7 +7743,7 @@ AutoGetTushitaToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
+AutoDragonTridentToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Dragon Trident",
 	Desc = "Function Sea 2 Only",
 	Value = _G.Settings.Items["Auto Dragon Trident"],
@@ -7475,7 +7753,7 @@ AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
+AutoDragonTridentToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Greybeard",
 	Desc = "Function Sea 1 Only",
 	Value = _G.Settings.Items["Auto Greybeard"],
@@ -7485,7 +7763,7 @@ AutoDragonTridentToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoSharkSawToggle = Tabs.ItemsTab:Toggle({
+AutoSharkSawToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Shark Saw",
 	Desc = "Function Sea 1 Only",
 	Value = _G.Settings.Items["Auto Shark Saw"],
@@ -7495,7 +7773,7 @@ AutoSharkSawToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoPoleToggle = Tabs.ItemsTab:Toggle({
+AutoPoleToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Pole",
 	Desc = "Function Sea 1 Only",
 	Value = _G.Settings.Items["Auto Pole"],
@@ -7505,7 +7783,7 @@ AutoPoleToggle = Tabs.ItemsTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-AutoDarkDaggerToggle = Tabs.ItemsTab:Toggle({
+AutoDarkDaggerToggle = Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Dark Dagger",
 	Desc = "Need Spawn Rip Indra, Function Sea 3 Only",
 	Value = _G.Settings.Items["Auto Dark Dagger"],
@@ -7548,7 +7826,7 @@ local _ripIndraHakiIndex = 1;
 local _padHakiCF = CFrame.new(-26880.93359375, 22.848554611206, 473.18951416016);
 local _ripIndraTombCF = CFrame.new(-26965, 22.8, 495);
 
-Tabs.ItemsTab:Toggle({
+Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Pad Haki [Sea 3]",
 	Desc = "Equipa Hakis lendarios (Rosa/Branco/Vermelho) e ativa os Pads no castelo. Troca a cada 7s.",
 	Value = _G.Settings.Items["Auto Pad Haki"],
@@ -7615,7 +7893,7 @@ task.spawn(function()
 	end;
 end);
 
-Tabs.ItemsTab:Toggle({
+Tabs.FarmingHopTab:Toggle({
 	Title = "Spawn Rip Indra [Sea 3]",
 	Desc = "Leva automaticamente o God Chalice ate a lapide para spawnar Rip Indra.",
 	Value = _G.Settings.Items["Spawn Rip Indra"],
@@ -7671,7 +7949,7 @@ task.spawn(function()
 	end;
 end);
 
-Tabs.ItemsTab:Toggle({
+Tabs.FarmingHopTab:Toggle({
 	Title = "Auto Kill Rip Indra [Sea 3]",
 	Desc = "Mata automaticamente Rip Indra quando spawnar no Sea 3.",
 	Value = _G.Settings.Items["Auto Kill Rip Indra"],
@@ -8485,31 +8763,6 @@ TweenToMirageIslandToggle = Tabs.RaceTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
-FindBlueGearToggle = Tabs.RaceTab:Toggle({
-	Title = "Find Blue Gear",
-	Value = _G.Settings.Race["Find Blue Gear"],
-	Callback = function(state)
-		_G.Settings.Race["Find Blue Gear"] = state;
-		(getgenv()).SaveSetting();
-	end
-});
-spawn(function()
-	pcall(function()
-		while wait(0.2) do
-			if _G.Settings.Race["Find Blue Gear"] then
-				if (game:GetService("Workspace")).Map:FindFirstChild("MysticIsland") then
-					for i, v in pairs((game:GetService("Workspace")).Map.MysticIsland:GetChildren()) do
-						if v:IsA("MeshPart") then
-							if v.Material == Enum.Material.Neon then
-								TweenPlayer(v.CFrame);
-							end;
-						end;
-					end;
-				end;
-			end;
-		end;
-	end);
-end);
 LookMoonAbilityToggle = Tabs.RaceTab:Toggle({
 	Title = "Look Moon & use Ability",
 	Value = _G.Settings.Race["Look Moon Ability"],
@@ -9014,70 +9267,97 @@ local AutoBuyFightSection = Tabs.ShopTab:Section({
 	TextXAlignment = "Left"
 });
 
--- Mapa de Fight Styles e posições dos NPCs
 local FightStyleNPCs = {
-	["Dark Step"]     = {pos=CFrame.new(979.7, 261.2, 1557.7),   cost=150000},
-	["Electro"]       = {pos=CFrame.new(61122.65, 18.5, 1569.4), cost=500000, portal=Vector3.new(61163.8,11.7,1819.8)},
-	["Fishman Karate"]= {pos=CFrame.new(61122.65, 18.5, 1569.4), cost=2500000, portal=Vector3.new(61163.8,11.7,1819.8)},
-	["Dragon Breath"]  = {pos=CFrame.new(-429.54, 71.77, 1836.18), cost=1500000},
-	["Superhuman"]    = {pos=CFrame.new(-5039.59, 27.35, 4324.68), cost=3000000},
-	["Death Step"]    = {pos=CFrame.new(-5497.06, 47.59, -795.24), cost=5000000},
-	["Sharkman Karate"]= {pos=CFrame.new(609.86, 400.12, -5372.26), cost=5000000},
-	["Electric Claw"] = {pos=CFrame.new(-6064.07, 15.24, -4902.98), cost=5000000},
-	["Dragon Talon"]  = {pos=CFrame.new(-290.07, 42.90, 5581.59),  cost=5000000},
-	["God Human"]     = {pos=CFrame.new(-16546.748, 55.72, -172.87), cost=5000000},
+	["Dark Step"]      = {npc="Dark Step Teacher",   pos=CFrame.new(979.7, 261.2, 1557.7),    buy="BuyDarkStep"},
+	["Electric"]       = {npc="Mad Scientist",        pos=CFrame.new(61050, 19, 1537),          buy="BuyElectro",   portal=Vector3.new(61163.8,11.7,1819.8)},
+	["Water Kung Fu"]  = {npc="Water Kung Fu Teacher",pos=CFrame.new(-16682, -170, -5780),      buy="BuyFishmanKarate", submerged=true},
+	["Dragon Breath"]  = {npc="Sabi",                 pos=CFrame.new(-429.54, 71.77, 1836.18),  buy="BuyDragonBreath"},
+	["Superhuman"]     = {npc="Martial Arts Master",  pos=CFrame.new(-5039.59, 27.35, 4324.68), buy="BuySuperhuman"},
+	["Sharkman Karate"]= {npc="Sharkman Teacher",     pos=CFrame.new(609.86, 400.12, -5372.26), buy="BuySharkmanKarate"},
+	["Death Step"]     = {npc="Phoeyu, the Reformed", pos=CFrame.new(-5497.06, 47.59, -795.24), buy="BuyDeathStep"},
+	["Electric Claw"]  = {npc="Previous Hero",        pos=CFrame.new(-6064.07, 15.24, -4902.98),buy="BuyElectricClaw"},
+	["Dragon Talon"]   = {npc="UzothDragon",          pos=CFrame.new(-290.07, 42.90, 5581.59),  buy="BuyDragonTalon"},
+	["Godhuman"]       = {npc="Ancient Monk",          pos=CFrame.new(-16546.748, 55.72, -172.87),buy="BuyGodhuman"},
+	["Sanguine Art"]   = {npc="Shafi",                pos=CFrame.new(-12318.19, 602, -6538.66), buy="BuySanguineArt"},
 };
 
-local FightStyleNames = {};
-for k, _ in pairs(FightStyleNPCs) do table.insert(FightStyleNames, k); end;
-table.sort(FightStyleNames);
+local FightStyleOrder = {
+	"Dark Step", "Electric", "Water Kung Fu", "Dragon Breath", "Superhuman",
+	"Sharkman Karate", "Death Step", "Electric Claw", "Dragon Talon", "Godhuman", "Sanguine Art"
+};
 
-local SelectedFightStyle = FightStyleNames[1];
+local SelectedFightStyle = FightStyleOrder[1];
 Tabs.ShopTab:Dropdown({
 	Title = "Select Fight Style to Buy",
 	Desc = "Seleciona o estilo de luta para comprar indo até o NPC",
-	Values = FightStyleNames,
-	Value = FightStyleNames[1],
+	Values = FightStyleOrder,
+	Value = FightStyleOrder[1],
 	Callback = function(v) SelectedFightStyle = v; end
 });
 
 Tabs.ShopTab:Button({
-	Title = " Go Buy Fight Style (Tele to NPC)",
-	Desc = "Teleporta até o NPC e compra o estilo selecionado",
+	Title = " Go Buy Fight Style (Tween to NPC)",
+	Desc = "Tween até o NPC e compra o estilo selecionado",
 	Callback = function()
 		pcall(function()
 			local data = FightStyleNPCs[SelectedFightStyle];
 			if not data then return; end;
-			-- Usa portal se necessário (ex: Fishman Island)
 			if data.portal then
 				(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", data.portal);
 				task.wait(1);
 			end;
+			if data.submerged then
+				local _SUBMARINE_WORKER_CF = CFrame.new(-16417.6, 74.26, 1811.3);
+				TweenPlayer(_SUBMARINE_WORKER_CF);
+				local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+				local timeout = 0;
+				repeat task.wait(0.1); timeout = timeout + 0.1; until not hrp or (hrp.Position - _SUBMARINE_WORKER_CF.Position).Magnitude < 15 or timeout > 8;
+				(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
+				task.wait(0.8);
+				(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
+				task.wait(1.5);
+			end;
 			TweenPlayer(data.pos);
-			task.wait(1.5);
-			-- Tenta comprar via servidor (método InvokeServer)
-			(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyAbility", SelectedFightStyle);
+			task.wait(2);
+			(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy);
+			task.wait(0.5);
+			(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy, true);
 		end);
 	end
 });
 
 Tabs.ShopTab:Toggle({
 	Title = "Auto Buy All Fight Styles",
-	Desc = "Vai em cada NPC e compra todos os estilos de luta",
+	Desc = "Vai em cada NPC e compra todos os estilos de luta em ordem",
 	Value = false,
 	Callback = function(state)
 		if state then
 			task.spawn(function()
-				for styleName, data in pairs(FightStyleNPCs) do
+				for _, styleName in ipairs(FightStyleOrder) do
 					if not state then break; end;
+					local data = FightStyleNPCs[styleName];
+					if not data then continue; end;
 					pcall(function()
 						if data.portal then
 							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", data.portal);
 							task.wait(1);
 						end;
+						if data.submerged then
+							local _SUBMARINE_WORKER_CF = CFrame.new(-16417.6, 74.26, 1811.3);
+							TweenPlayer(_SUBMARINE_WORKER_CF);
+							local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+							local timeout = 0;
+							repeat task.wait(0.1); timeout = timeout + 0.1; until not hrp or (hrp.Position - _SUBMARINE_WORKER_CF.Position).Magnitude < 15 or timeout > 8;
+							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
+							task.wait(0.8);
+							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
+							task.wait(1.5);
+						end;
 						TweenPlayer(data.pos);
 						task.wait(2);
-						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("BuyAbility", styleName);
+						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy);
+						task.wait(0.5);
+						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy, true);
 						task.wait(1);
 					end);
 				end;
@@ -10373,6 +10653,64 @@ spawn(function()
 		end;
 	end;
 end);
+local function CheckShark()
+	for _, v in pairs(workspace:GetChildren()) do
+		if v.Name == "Shark" and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	for _, v in pairs(workspace:GetDescendants()) do
+		if (v.Name == "Shark" or v.Name == "Bull Shark") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	return false;
+end;
+local function CheckTerrorShark()
+	for _, v in pairs(workspace:GetChildren()) do
+		if (v.Name == "Terror Shark" or v.Name == "TerrorShark") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	return false;
+end;
+local function CheckFishCrew()
+	for _, v in pairs(workspace.Enemies:GetChildren()) do
+		if (string.find(v.Name, "Fish") or string.find(v.Name, "Crew")) and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	return false;
+end;
+local function CheckPiranha()
+	for _, v in pairs(workspace:GetChildren()) do
+		if v.Name == "Piranha" and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	return false;
+end;
+local function CheckEnemiesBoat()
+	for _, v in pairs(workspace:GetDescendants()) do
+		if (string.find(v.Name, "Pirate") or string.find(v.Name, "Marine")) and v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+			local hrp = v:FindFirstChild("HumanoidRootPart");
+			if hrp then
+				local plrHrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+				if plrHrp and (hrp.Position - plrHrp.Position).Magnitude < 500 then return true; end;
+			end;
+		end;
+	end;
+	return false;
+end;
+local function CheckPirateGrandBrigade()
+	for _, v in pairs(workspace:GetDescendants()) do
+		if string.find(v.Name, "Grand Brigade") and v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	return false;
+end;
+local function CheckHauntedCrew()
+	for _, v in pairs(workspace.Enemies:GetChildren()) do
+		if (string.find(v.Name, "Haunted") or v.Name == "Ghost" or v.Name == "Pirate Ghost") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	return false;
+end;
+local function CheckLeviathan()
+	for _, v in pairs(workspace:GetChildren()) do
+		if string.find(v.Name, "Leviathan") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then return true; end;
+	end;
+	return false;
+end;
+
 local SeaEventSection = Tabs.SeaEventTab:Section({
 	Title = " Sea Event - Setting Sail",
 	TextXAlignment = "Left"
@@ -10471,14 +10809,29 @@ task.spawn(function()
 			local hum = char:FindFirstChildOfClass("Humanoid");
 			if not hrp or not hum then return; end;
 			local selectedBoat = _G.Settings.SeaEvent["Selected Boat"] or "Guardian";
-			local boat = workspace.Boats:FindFirstChild(selectedBoat);
-			-- Compra barco se não tiver
+			local plrName = plr.Name;
+			local boat = nil;
+			for _, b in pairs(workspace.Boats:GetChildren()) do
+				if b.Name == selectedBoat then
+					local owner = b:FindFirstChild("OwnerName") or b:FindFirstChild("Owner");
+					if owner and (owner.Value == plrName) then
+						boat = b;
+						break;
+					end;
+				end;
+			end;
+			if not boat then
+				boat = workspace.Boats:FindFirstChild(selectedBoat);
+				local owner = boat and (boat:FindFirstChild("OwnerName") or boat:FindFirstChild("Owner"));
+				if owner and owner.Value ~= plrName then boat = nil; end;
+			end;
+			-- Compra barco se não tiver (proprio)
 			if not boat then
 				TweenPlayer(_BOAT_DEALER_CF);
 				task.wait(2);
-				if (hrp.Position - _BOAT_DEALER_CF.Position).Magnitude < 20 then
+				if (hrp.Position - _BOAT_DEALER_CF.Position).Magnitude < 30 then
 					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat", selectedBoat);
-					task.wait(1);
+					task.wait(1.5);
 				end;
 				return;
 			end;
@@ -10985,6 +11338,135 @@ TweenToMirageIslandToggle = Tabs.SeaStackTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
+
+_G.FindMirage = _G.FindMirage or false;
+_G.AutoBlueGear = _G.AutoBlueGear or false;
+
+local _MirageSection = Tabs.SeaStackTab:Section({
+	Title = "MIRAGE ISLAND",
+	TextXAlignment = "Left"
+});
+
+Tabs.SeaStackTab:Toggle({
+	Title = "Auto Find Mirage Island",
+	Desc = "Compra barco na Tiki, vai ao mar Lv 4, patrulha ate Mirage spawnar. Se barco quebrar, reseta e recomeça.",
+	Value = _G.Settings.SeaStack["Auto Find Mirage"] or false,
+	Callback = function(state)
+		_G.FindMirage = state;
+		if _G.Settings and _G.Settings.SeaStack then _G.Settings.SeaStack["Auto Find Mirage"] = state; (getgenv()).SaveSetting(); end;
+	end
+});
+spawn(function()
+	while wait(0.5) do
+		pcall(function()
+			if not _G.FindMirage then return; end;
+			local plr = game.Players.LocalPlayer;
+			local char = plr.Character;
+			if not char then return; end;
+			local hrp = char:FindFirstChild("HumanoidRootPart");
+			local hum = char:FindFirstChildOfClass("Humanoid");
+			if not hrp or not hum then return; end;
+			local mirage = workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island");
+			if mirage then
+				TweenPlayer(mirage.CFrame);
+				return;
+			end;
+			local selectedBoat = _G.Settings.SeaEvent["Selected Boat"] or "Guardian";
+			local boat = nil;
+			for _, b in pairs(workspace.Boats:GetChildren()) do
+				if b.Name == selectedBoat then
+					local owner = b:FindFirstChild("OwnerName") or b:FindFirstChild("Owner");
+					if not owner or owner.Value == plr.Name then boat = b; break; end;
+				end;
+			end;
+			if not boat then
+				local _TIKI_NPC_CF = CFrame.new(-16927.451, 9.086, 433.864);
+				TweenPlayer(_TIKI_NPC_CF);
+				task.wait(2);
+				if (hrp.Position - _TIKI_NPC_CF.Position).Magnitude < 30 then
+					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat", selectedBoat);
+					task.wait(1.5);
+				end;
+				return;
+			end;
+			if not hum.Sit then
+				local seat = boat:FindFirstChildWhichIsA("VehicleSeat");
+				if seat then hrp.CFrame = seat.CFrame * CFrame.new(0,1.5,0); end;
+				return;
+			end;
+			local _MIRAGE_PATROL_CF = CFrame.new(-34054.6875, 30.22, -2560.12);
+			local _MIRAGE_PATROL_CF2 = CFrame.new(-38887.5547, 30.0, -2162.99);
+			local patrolTarget = (hrp.Position - _MIRAGE_PATROL_CF.Position).Magnitude < 500 and _MIRAGE_PATROL_CF2 or _MIRAGE_PATROL_CF;
+			TweenBoat(patrolTarget);
+		end);
+	end;
+end);
+
+Tabs.SeaStackTab:Toggle({
+	Title = "Auto Blue Gear",
+	Desc = "Vai ao ponto mais alto da Mirage, olha fixamente para a lua. Quando a lua brilhar a noite, teleporta para a engrenagem.",
+	Value = _G.Settings.SeaStack["Auto Blue Gear"] or false,
+	Callback = function(state)
+		_G.AutoBlueGear = state;
+		if _G.Settings and _G.Settings.SeaStack then _G.Settings.SeaStack["Auto Blue Gear"] = state; (getgenv()).SaveSetting(); end;
+	end
+});
+spawn(function()
+	pcall(function()
+		while wait(0.2) do
+			if not _G.AutoBlueGear then continue; end;
+			local mystic = workspace.Map:FindFirstChild("MysticIsland");
+			if not mystic then continue; end;
+			local highPoint = GetHighestPoint and GetHighestPoint();
+			if not highPoint then continue; end;
+			local plr = game.Players.LocalPlayer;
+			local char = plr.Character;
+			if not char then continue; end;
+			local hrp = char:FindFirstChild("HumanoidRootPart");
+			if not hrp then continue; end;
+			TweenPlayer(highPoint.CFrame * CFrame.new(0, 211.88, 0));
+			local moonDir = game.Lighting:GetMoonDirection();
+			local lookAtPos = hrp.Position + moonDir * 100;
+			workspace.CurrentCamera.CFrame = CFrame.lookAt(workspace.CurrentCamera.CFrame.p, lookAtPos);
+			local nightTime = game.Lighting.ClockTime >= 18 or game.Lighting.ClockTime <= 6;
+			if nightTime then
+				for _, v in pairs(mystic:GetDescendants()) do
+					if v:IsA("MeshPart") and v.Material == Enum.Material.Neon and v.BrickColor == BrickColor.new("Bright blue") then
+						hrp.CFrame = v.CFrame;
+						task.wait(0.2);
+						pcall(function()
+							game:GetService("StarterGui"):SetCore("SendNotification", {
+								Title = "TRon Void Hub",
+								Text = "Quest completa!",
+								Duration = 6
+							});
+						end);
+						_G.AutoBlueGear = false;
+						if _G.Settings and _G.Settings.SeaStack then _G.Settings.SeaStack["Auto Blue Gear"] = false; (getgenv()).SaveSetting(); end;
+						return;
+					end;
+				end;
+				for _, v in pairs(mystic:GetDescendants()) do
+					if v:IsA("MeshPart") and v.Material == Enum.Material.Neon then
+						hrp.CFrame = v.CFrame;
+						task.wait(0.2);
+						pcall(function()
+							game:GetService("StarterGui"):SetCore("SendNotification", {
+								Title = "TRon Void Hub",
+								Text = "Quest completa!",
+								Duration = 6
+							});
+						end);
+						_G.AutoBlueGear = false;
+						if _G.Settings and _G.Settings.SeaStack then _G.Settings.SeaStack["Auto Blue Gear"] = false; (getgenv()).SaveSetting(); end;
+						return;
+					end;
+				end;
+			end;
+		end;
+	end);
+end);
+
 function GetHighestPoint()
 	for i, v in pairs((game:GetService("Workspace")).Map.MysticIsland:GetDescendants()) do
 		if v:IsA("MeshPart") then
@@ -11731,8 +12213,8 @@ end);
 _G.FruitInterrupt = false;
 
 -- Posicoes dos portais conhecidos
-local _PORTAL_DON_FLAMINGO = CFrame.new(-5685.5, 318.4, -3246.5); -- Sea 2 - Don Flamingo
-local _PORTAL_MANSION_S3   = CFrame.new(-12471, 374.9, -7551.6);  -- Sea 3 - Mansion
+local _PORTAL_DON_FLAMINGO = CFrame.new(-5685.5, 318.4, -3246.5); -- Sea 2 - Don Flamingo / Rose Kingdom / Cursed Ship
+local _PORTAL_MANSION_S3   = CFrame.new(-12471, 374.9, -7551.6);  -- Sea 3 - Mansion / Turtle Island
 local _PORTAL_CASTLE_S3    = CFrame.new(-26880, 22.8, 473.1);     -- Sea 3 - Castle/Tiki
 local _PORTAL_HYDRA_S3     = CFrame.new(5643.4, 1013, -340.5);    -- Sea 3 - Hydra Island
 
@@ -11746,16 +12228,13 @@ local function _getFruitInWorkspace()
 end;
 
 local function _getPortalForFruitPos(fruitPos)
-	-- Verifica se a fruta está em zona de portal (Sea 3)
-	-- Mansao / Castle / Hydra / Tiki = usa tween direto pois sao portais de mundo
-	-- Sea 2 = Don Flamingo se fruta estiver no Kingdom of Rose ou proximidades
 	local function dist(cf) return (fruitPos - cf.Position).Magnitude; end;
 	if World3 then
-		if dist(_PORTAL_MANSION_S3) < 3000 then return _PORTAL_MANSION_S3; end;
-		if dist(_PORTAL_CASTLE_S3) < 4000 then return _PORTAL_CASTLE_S3; end;
-		if dist(_PORTAL_HYDRA_S3) < 3000 then return _PORTAL_HYDRA_S3; end;
+		if dist(_PORTAL_HYDRA_S3) < 3500 then return _PORTAL_HYDRA_S3; end;
+		if dist(_PORTAL_MANSION_S3) < 5000 then return _PORTAL_MANSION_S3; end;
+		if dist(_PORTAL_CASTLE_S3) < 5000 then return _PORTAL_CASTLE_S3; end;
 	elseif World2 then
-		if dist(_PORTAL_DON_FLAMINGO) < 5000 then return _PORTAL_DON_FLAMINGO; end;
+		if dist(_PORTAL_DON_FLAMINGO) < 8000 then return _PORTAL_DON_FLAMINGO; end;
 	end;
 	return nil;
 end;
@@ -11792,6 +12271,8 @@ local function _tweenToFruitAndPick(fruit)
 				task.wait(0.05); t1 = t1 + 0.05;
 				if t1 > dur1 + 1 then break; end;
 			end;
+			task.wait(0.5);
+			hrp.CFrame = portal;
 			task.wait(0.3);
 		end;
 	end;
