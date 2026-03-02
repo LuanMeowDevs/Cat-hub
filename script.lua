@@ -1,8 +1,5 @@
 local WindUI = (loadstring(game:HttpGet("https://github.com/Footagesus/WindUI/releases/latest/download/main.lua")))();
 
--- Translator removido (sistema parou de funcionar)
-local function T(key) return key end;
-
 task.spawn(function()
 	local Players = game:GetService("Players");
 	local LP = Players.LocalPlayer;
@@ -768,13 +765,6 @@ _G.Settings = {
 		["Auto Farm Boss"] = false,
 		["Auto Farm All Boss"] = false
 	},
-	MultiFarm = {
-		["Auto Fully Volcanic Island"] = false,
-		["Auto Reset When Completed"] = false,
-		["Auto Collect Eggs"] = false,
-		["Auto Collect Bones"] = false,
-		["Selected Boat"] = "Guardian",
-	},
 	Event = {},
 	Farm = {
 		["Auto Elite Hunter"] = false,
@@ -1052,20 +1042,7 @@ end;
 	end;
 end;
 (getgenv()).Load();
--- Restaura variaveis globais do MultiFarm a partir do save
-pcall(function()
-	if _G.Settings and _G.Settings.MultiFarm then
-		_G.FullyVolcanicActive  = _G.Settings.MultiFarm["Auto Fully Volcanic Island"] or false;
-		_G.VolcanicAutoReset    = _G.Settings.MultiFarm["Auto Reset When Completed"] or false;
-		_G.VolcanicCollectEgg   = _G.Settings.MultiFarm["Auto Collect Eggs"] or false;
-		_G.VolcanicCollectBone  = _G.Settings.MultiFarm["Auto Collect Bones"] or false;
-		_G.VolcanicSelectedBoat = _G.Settings.MultiFarm["Selected Boat"] or "Guardian";
-		if _G.Settings.MultiFarm["TRonLang"] then
-			_G.TRonLang = _G.Settings.MultiFarm["TRonLang"];
-		end;
-	end;
-end);
-
+if game.PlaceId == 2753915549 or game.PlaceId == 85211729168715 then
     World1 = true;
 elseif game.PlaceId == 4442272183 or game.PlaceId == 79091703265657 then
     World2 = true;
@@ -5228,75 +5205,55 @@ _volcanicMainLoop = function()
 end;
 
 local _multiFarmSection = Tabs.MultiFarmTab:Section({
-	Title = "VOLCANIC ISLAND",
+	Title = "PRE HISTORIC KAITUN",
 	TextXAlignment = "Left"
 });
 
 local _volcanicBoatList = {"Guardian", "Patrol Boat", "Speedboat", "Upgraded Boat", "Cannon Raft"};
 
 Tabs.MultiFarmTab:Dropdown({
-	Title = T("Boat Selection"),
+	Title = "Boat Selection",
 	Desc = "Selecione o barco para navegar ate a Volcanic Island",
 	Options = _volcanicBoatList,
-	CurrentOption = {_G.Settings and _G.Settings.MultiFarm and _G.Settings.MultiFarm["Selected Boat"] or "Guardian"},
+	CurrentOption = {"Guardian"},
 	Callback = function(sel)
 		_G.VolcanicSelectedBoat = sel[1] or "Guardian";
-		if _G.Settings and _G.Settings.MultiFarm then
-			_G.Settings.MultiFarm["Selected Boat"] = _G.VolcanicSelectedBoat;
-			pcall(function() (getgenv()).SaveSetting(); end);
-		end;
 	end
 });
 
 Tabs.MultiFarmTab:Toggle({
-	Title = T("Auto Fully Volcanic Island"),
+	Title = "Blox Fruits: Fully Volcanic Island",
 	Desc = "Compra barco na Tiki, navega ate Volcanic Island no mar 6, inicia Raid, tampa buracos de lava e mata Aura Golems. Sea 3.",
-	Value = _G.Settings and _G.Settings.MultiFarm and _G.Settings.MultiFarm["Auto Fully Volcanic Island"] or false,
+	Value = false,
 	Callback = function(state)
 		_G.FullyVolcanicActive = state;
-		if _G.Settings and _G.Settings.MultiFarm then
-			_G.Settings.MultiFarm["Auto Fully Volcanic Island"] = state;
-			pcall(function() (getgenv()).SaveSetting(); end);
-		end;
 		if state then
 			task.spawn(_volcanicMainLoop);
 		end;
 	end
 });
 Tabs.MultiFarmTab:Toggle({
-	Title = T("Auto Reset When Completed"),
+	Title = "Blox Fruits: Reset after completing volcanic",
 	Desc = "Envia notificacao e auto reseta 10 segundos apos completar a Volcanic Island.",
-	Value = _G.Settings and _G.Settings.MultiFarm and _G.Settings.MultiFarm["Auto Reset When Completed"] or false,
+	Value = false,
 	Callback = function(state)
 		_G.VolcanicAutoReset = state;
-		if _G.Settings and _G.Settings.MultiFarm then
-			_G.Settings.MultiFarm["Auto Reset When Completed"] = state;
-			pcall(function() (getgenv()).SaveSetting(); end);
-		end;
 	end
 });
 Tabs.MultiFarmTab:Toggle({
-	Title = T("Auto Collect Eggs"),
+	Title = "Blox Fruits: Auto Collect Egg",
 	Desc = "Coleta os Eggs que spawnam apos completar a Volcanic Island, antes de auto resetar.",
-	Value = _G.Settings and _G.Settings.MultiFarm and _G.Settings.MultiFarm["Auto Collect Eggs"] or false,
+	Value = false,
 	Callback = function(state)
 		_G.VolcanicCollectEgg = state;
-		if _G.Settings and _G.Settings.MultiFarm then
-			_G.Settings.MultiFarm["Auto Collect Eggs"] = state;
-			pcall(function() (getgenv()).SaveSetting(); end);
-		end;
 	end
 });
 Tabs.MultiFarmTab:Toggle({
-	Title = T("Auto Collect Bones"),
+	Title = "Blox Fruits: Auto Collect Bone",
 	Desc = "Coleta os ossos que caem apos completar a ilha. Funciona apos coletar Egg e antes do auto reset.",
-	Value = _G.Settings and _G.Settings.MultiFarm and _G.Settings.MultiFarm["Auto Collect Bones"] or false,
+	Value = false,
 	Callback = function(state)
 		_G.VolcanicCollectBone = state;
-		if _G.Settings and _G.Settings.MultiFarm then
-			_G.Settings.MultiFarm["Auto Collect Bones"] = state;
-			pcall(function() (getgenv()).SaveSetting(); end);
-		end;
 	end
 });
 
@@ -6079,42 +6036,6 @@ SettingsSection = Tabs.SettingsTab:Section({
 	Title = "Settings",
 	TextXAlignment = "Left"
 });
--- ── Seletor de Idioma ──────────────────────────────────
-Tabs.SettingsTab:Section({Title = "🌐 Language / Idioma / Ngôn ngữ", TextXAlignment = "Left"});
-Tabs.SettingsTab:Dropdown({
-	Title = "🌐 Interface Language",
-	Desc = "Selecione o idioma da interface | Select interface language",
-	Options = {"🇧🇷 Português (BR)", "🇺🇸 English", "🇻🇳 Tiếng Việt", "🇪🇸 Español", "🇨🇳 中文", "🇫🇷 Français", "🇩🇪 Deutsch", "🇷🇺 Русский", "🇹🇷 Türkçe", "🇮🇩 Indonesia"},
-	CurrentOption = {({pt="🇧🇷 Português (BR)", en="🇺🇸 English", vi="🇻🇳 Tiếng Việt", es="🇪🇸 Español", zh="🇨🇳 中文", fr="🇫🇷 Français", de="🇩🇪 Deutsch", ru="🇷🇺 Русский", tr="🇹🇷 Türkçe", id="🇮🇩 Indonesia"})[_G.TRonLang or "en"] or "🇺🇸 English"},
-	Callback = function(opt)
-		local map = {
-			["🇧🇷 Português (BR)"] = "pt",
-			["🇺🇸 English"] = "en",
-			["🇻🇳 Tiếng Việt"] = "vi",
-			["🇪🇸 Español"] = "es",
-			["🇨🇳 中文"] = "zh",
-			["🇫🇷 Français"] = "fr",
-			["🇩🇪 Deutsch"] = "de",
-			["🇷🇺 Русский"] = "ru",
-			["🇹🇷 Türkçe"] = "tr",
-			["🇮🇩 Indonesia"] = "id",
-		};
-		_G.TRonLang = map[opt[1]] or "en";
-		-- Salva idioma nos settings
-		if _G.Settings and _G.Settings.MultiFarm then
-			_G.Settings.MultiFarm["TRonLang"] = _G.TRonLang;
-			pcall(function() (getgenv()).SaveSetting(); end);
-		end;
-		pcall(function()
-			game:GetService("StarterGui"):SetCore("SendNotification", {
-				Title = "TRon Void Hub",
-				Text = "Language changed! Reload script for full effect. | Recarregue o script para efeito completo.",
-				Duration = 5
-			});
-		end);
-	end
-});
--- ───────────────────────────────────────────────────────
 ResetSettingsButton = Tabs.SettingsTab:Button({
 	Title = " Reset Settings",
 	Desc = "Apaga todas as configurações salvas (pede confirmação)",
@@ -7456,528 +7377,6 @@ spawn(function()
 		end);
 	end;
 end);
-
--- ══════════════════════════════════════════════
--- AUTO SKULL GUITAR (puzzle do Haunted Castle - Eclipse)
--- ══════════════════════════════════════════════
-_G.Auto_Skull_Guitar = false;
-
--- Helper: retorna rotação Z do segmento do tablet
-local function getTabletSegZ(num)
-	local ok, seg = pcall(function() return workspace.Map["Haunted Castle"].Tablet["Segment"..num].Line.Rotation.Z end);
-	return ok and seg or nil;
-end;
-
--- Helper: retorna rotação Z do troféu
-local function getTrophyZ(num)
-	local trophies = workspace.Map["Haunted Castle"].Trophies.Quest;
-	for _, v in pairs(trophies:GetChildren()) do
-		if v.Name == "Trophy"..num and v:FindFirstChild("Handle") then
-			return v.Handle.Rotation.Z;
-		end;
-	end;
-	return nil;
-end;
-
--- Helper: clica placard se não for Pearl
-local function firePlacard(number, side)
-	pcall(function()
-		local p = workspace.Map["Haunted Castle"]["Placard"..number][side];
-		if tostring(p.Indicator.BrickColor) ~= "Pearl" then
-			fireclickdetector(p.ClickDetector);
-		end;
-	end);
-end;
-
--- Thread: mantém Living Zombie imóvel na posição de farm
-task.spawn(function()
-	while wait() do
-		pcall(function()
-			if _G.Auto_Skull_Guitar then
-				local v = GetConnectionEnemies("Living Zombie");
-				if v then
-					v.HumanoidRootPart.CFrame = CFrame.new(-10138.3974609375, 138.6524658203125, 5902.89208984375);
-					v.Head.CanCollide = false;
-					v.Humanoid.Sit = false;
-					v.HumanoidRootPart.CanCollide = false;
-					v.Humanoid.JumpPower = 0;
-					v.Humanoid.WalkSpeed = 0;
-					if v.Humanoid:FindFirstChild("Animator") then v.Humanoid:FindFirstChild("Animator"):Destroy(); end;
-				end;
-			end;
-		end);
-	end;
-end);
-
--- Thread principal: lógica do puzzle Skull Guitar
-task.spawn(function()
-	local replicated = game:GetService("ReplicatedStorage");
-	while wait(0.3) do
-		pcall(function()
-			if _G.Auto_Skull_Guitar and World3 then
-				replicated.Remotes.CommF_:InvokeServer("gravestoneEvent", 2);
-				replicated.Remotes.CommF_:InvokeServer("gravestoneEvent", 2, true);
-
-				local progress = replicated.Remotes.CommF_:InvokeServer("GuitarPuzzleProgress", "Check");
-
-				if progress == nil then
-					-- Teleporta para área e tenta iniciar
-					local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-					if hrp then hrp.CFrame = CFrame.new(-8655.0166015625, 141.3166961669922, 6160.0224609375); end;
-					replicated.Remotes.CommF_:InvokeServer("gravestoneEvent", 2);
-					replicated.Remotes.CommF_:InvokeServer("gravestoneEvent", 2, true);
-
-				elseif progress.Swamp == false then
-					-- Etapa 1: matar Living Zombie até a água do pântano mudar de cor
-					local v = GetConnectionEnemies("Living Zombie");
-					if v then
-						repeat
-							task.wait();
-							Attack.Kill(v, _G.Auto_Skull_Guitar);
-						until not _G.Auto_Skull_Guitar or v.Humanoid.Health <= 0 or not v.Parent
-							or (workspace.Map["Haunted Castle"].SwampWater.Color ~= Color3.fromRGB(117, 0, 0));
-					else
-						local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-						if hrp then hrp.CFrame = CFrame.new(-10170.7275390625, 138.6524658203125, 5934.26513671875); end;
-					end;
-
-				elseif progress.Gravestones == false then
-					-- Etapa 2: clicar placards nas posições corretas
-					firePlacard("7","Left");
-					firePlacard("6","Left");
-					firePlacard("5","Left");
-					firePlacard("4","Right");
-					firePlacard("3","Left");
-					firePlacard("2","Right");
-					firePlacard("1","Right");
-
-				elseif progress.Ghost == false then
-					-- Etapa 3: interagir com ghost
-					replicated.Remotes.CommF_:InvokeServer("GuitarPuzzleProgress", "Ghost");
-					replicated.Remotes.CommF_:InvokeServer("GuitarPuzzleProgress", "Ghost", true);
-
-				elseif progress.Trophies == false then
-					-- Etapa 4: combinar troféus com segmentos do tablet
-					local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-					if hrp then hrp.CFrame = CFrame.new(-9532.8232421875, 6.471667766571045, 6078.068359375); end;
-
-					local tabSegs = {1, 3, 4, 7, 10};
-					for i = 1, 5 do
-						local segNum = tabSegs[i];
-						repeat
-							task.wait();
-							local z_trophy = getTrophyZ(i);
-							local z_seg    = getTabletSegZ(segNum);
-							if z_trophy and z_seg and z_trophy ~= z_seg then
-								fireclickdetector(workspace.Map["Haunted Castle"].Tablet["Segment"..segNum]:FindFirstChild("ClickDetector"));
-							end;
-						until getTrophyZ(i) == getTabletSegZ(segNum) or not _G.Auto_Skull_Guitar;
-					end;
-
-					-- Segmentos secundários para zerar
-					repeat
-						task.wait();
-						for _, s in ipairs({2,5,6,8,9}) do
-							pcall(function() fireclickdetector(workspace.Map["Haunted Castle"].Tablet["Segment"..s]:FindFirstChild("ClickDetector")); end);
-						end;
-					until workspace.Map["Haunted Castle"].Tablet.Segment2.Line.Rotation.Z == 0 or not _G.Auto_Skull_Guitar;
-
-				elseif progress.Pipes == false then
-					-- Etapa 5: puzzle de tubulações coloridas
-					pcall(function()
-						local floor = workspace.Map["Haunted Castle"]["Lab Puzzle"].ColorFloor.Model;
-						local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-						local seq = {
-							{"Part3",  1}, {"Part4", 3}, {"Part6", 2}, {"Part8", 1}, {"Part10", 3}
-						};
-						for _, item in ipairs(seq) do
-							local part = floor:FindFirstChild(item[1]);
-							if part and hrp then
-								hrp.CFrame = part.CFrame;
-								for _=1, item[2] do
-									fireclickdetector(part.ClickDetector);
-								end;
-							end;
-						end;
-					end);
-
-				end;
-			end;
-		end);
-	end;
-end);
-
-Tabs.ItemsTab:Toggle({
-	Title = "Auto Skull Guitar",
-	Desc = "Puzzle completo do Castelo Assombrado (Sea 3)",
-	Value = false,
-	Callback = function(state)
-		_G.Auto_Skull_Guitar = state;
-	end
-});
-
--- ══════════════════════════════════════════════
--- AUTO FARM MATERIAL SKULL GUITAR
--- Ordem: Dark Fragment (Darkbeard) → Ectoplasm → Bones
--- ══════════════════════════════════════════════
-_G.AutoMatSkullGuitar = false;
-
-task.spawn(function()
-	local replicated = game:GetService("ReplicatedStorage");
-	while wait(0.5) do
-		pcall(function()
-			if _G.AutoMatSkullGuitar then
-				local function GetM(mat)
-					local ok, v = pcall(function()
-						return game.Players.LocalPlayer.Data.Inventory:FindFirstChild(mat) and
-							game.Players.LocalPlayer.Data.Inventory[mat].Value or 0;
-					end);
-					return ok and v or 0;
-				end;
-
-				local function GetBP(item)
-					return game.Players.LocalPlayer.Backpack:FindFirstChild(item) or
-						game.Players.LocalPlayer.Character:FindFirstChild(item);
-				end;
-
-				-- Se já tiver tudo, comprar
-				if GetM("Bones") >= 500 and GetM("Ectoplasm") >= 250 and GetM("Dark Fragment") >= 1 then
-					replicated.Remotes.CommF_:InvokeServer("soulGuitarBuy", true);
-					WindUI:Notify({Title="Skull Guitar!", Content="Materiais completos! Comprando...", Icon="star", Duration=5});
-					_G.AutoMatSkullGuitar = false;
-					return;
-				end;
-
-				-- 1. Dark Fragment - mata Darkbeard / faz chests no Sea 2
-				if GetM("Dark Fragment") < 1 then
-					if World2 then
-						local black = GetConnectionEnemies("Darkbeard");
-						if black then
-							repeat
-								task.wait();
-								Attack.Kill(black, _G.AutoMatSkullGuitar);
-							until not _G.AutoMatSkullGuitar or black.Humanoid.Health <= 0 or not black.Parent;
-						elseif GetBP("Fist of Darkness") then
-							-- Summonar Darkbeard
-							local sumDet = workspace.Map.DarkbeardArena.Summoner.Detection;
-							local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							if hrp then
-								hrp.CFrame = sumDet.CFrame;
-								EquipWeapon("Fist of Darkness");
-								firetouchinterest(game.Players.LocalPlayer.Character["Fist of Darkness"].Handle, sumDet, 0);
-								firetouchinterest(game.Players.LocalPlayer.Character["Fist of Darkness"].Handle, sumDet, 1);
-							end;
-						else
-							-- Farm chests para conseguir Fist of Darkness
-							local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							if hrp then hrp.CFrame = CFrame.new(3798.4575195313, 13.826690673828, -3399.806640625); end;
-							task.wait(1);
-							-- Server hop se Darkbeard não encontrado
-							if not GetConnectionEnemies("Darkbeard") and not GetBP("Fist of Darkness") then
-								pcall(function() Hop(); end);
-							end;
-						end;
-					else
-						replicated.Remotes.CommF_:InvokeServer("TravelDressrosa");
-					end;
-
-				-- 2. Ectoplasm - navio assombrado no Sea 2
-				elseif GetM("Ectoplasm") < 250 then
-					if World2 then
-						local EctoTable = {"Ship Deckhand","Ship Engineer","Ship Steward","Ship Officer","Arctic Warrior"};
-						local xz = GetConnectionEnemies(EctoTable);
-						if xz then
-							repeat
-								task.wait();
-								Attack.Kill(xz, _G.AutoMatSkullGuitar);
-							until not _G.AutoMatSkullGuitar or not xz.Parent or xz.Humanoid.Health <= 0;
-						else
-							replicated.Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(923.21252441406, 126.9760055542, 32852.83203125));
-						end;
-					else
-						replicated.Remotes.CommF_:InvokeServer("TravelDressrosa");
-					end;
-
-				-- 3. Bones - castelo assombrado no Sea 3
-				elseif GetM("Bones") < 500 then
-					if World3 then
-						local BonesTable = {"Reborn Skeleton","Living Zombie","Demonic Soul","Posessed Mummy"};
-						local zx = GetConnectionEnemies(BonesTable);
-						if zx then
-							repeat
-								task.wait();
-								Attack.Kill(zx, _G.AutoMatSkullGuitar);
-							until not _G.AutoMatSkullGuitar or zx.Humanoid.Health <= 0 or not zx.Parent;
-						else
-							local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							if hrp then hrp.CFrame = CFrame.new(-9504.8564453125, 172.14292907714844, 6057.259765625); end;
-						end;
-					else
-						replicated.Remotes.CommF_:InvokeServer("TravelZou");
-					end;
-				end;
-			end;
-		end);
-	end;
-end);
-
-Tabs.ItemsTab:Toggle({
-	Title = "Auto Farm Material Skull Guitar",
-	Desc = "Dark Fragment → Ectoplasm → Bones (ordem de prioridade)",
-	Value = false,
-	Callback = function(state)
-		_G.AutoMatSkullGuitar = state;
-	end
-});
-
--- ══════════════════════════════════════════════
--- AUTO CDK - YAMA (Eclipse)
--- ══════════════════════════════════════════════
-_G.CDK_YM = false;
-_G.T1Yama = false;
-_G.T2Yama = false;
-_G.T3Yama = false;
-
-task.spawn(function()
-	local replicated = game:GetService("ReplicatedStorage");
-	while wait() do
-		pcall(function()
-			if _G.CDK_YM then
-				local Root = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-				if not Root then return; end;
-				local function _tp(cf) Root.CFrame = cf; end;
-				local function CDKProg() return replicated.Remotes.CommF_:InvokeServer("CDKQuest","Progress"); end;
-				local function EvilProg() local p = CDKProg(); return p and tonumber(p["Evil"]) or nil; end;
-
-				if tostring(replicated.Remotes.CommF_:InvokeServer("CDKQuest","OpenDoor")) ~= "opened" then
-					replicated.Remotes.CommF_:InvokeServer("CDKQuest","OpenDoor");
-					replicated.Remotes.CommF_:InvokeServer("CDKQuest","OpenDoor", true);
-				else
-					local finished = CDKProg() and CDKProg()["Finished"];
-					if finished == nil then
-						replicated.Remotes.CommF_:InvokeServer("CDKQuest","StartTrial","Evil");
-					elseif finished == false then
-						local ev = EvilProg();
-						if ev == -3 then
-							-- Stage 1: Forest Pirates (Yama quest)
-							local v = GetConnectionEnemies("Forest Pirate");
-							if v then
-								repeat task.wait(); Attack.Kill(v, _G.CDK_YM); until not _G.CDK_YM or not v.Parent or v.Humanoid.Health <= 0 or EvilProg() == 1;
-							else _tp(CFrame.new(-13446, 413, -7760)); end;
-						elseif ev == -4 then
-							-- Stage 2: mais Forest Pirates
-							local v = GetConnectionEnemies("Forest Pirate");
-							if v then
-								repeat task.wait(); Attack.Kill(v, _G.CDK_YM); until not _G.CDK_YM or not v.Parent or v.Humanoid.Health <= 0 or EvilProg() == 2;
-							else _tp(CFrame.new(-13446, 413, -7760)); end;
-						elseif ev == -5 then
-							-- Stage 3: Hell Dimension - acender tochas
-							if workspace.Map:FindFirstChild("HellDimension") and (Root.Position - workspace.Map.HellDimension.Spawn.Position).Magnitude <= 1000 then
-								-- Sair pela saída
-								if not _G.T1Yama then _tp(workspace.Map.HellDimension.Exit.CFrame); task.wait(1); _G.T1Yama = true; end;
-								-- Tocha 1
-								if not _G.T2Yama then
-									repeat task.wait();
-										_tp(workspace.Map.HellDimension.Torch1.Particles.CFrame);
-										for _, desc in pairs(workspace.Map.HellDimension:GetDescendants()) do
-											if desc:IsA("ProximityPrompt") then fireproximityprompt(desc); end;
-										end;
-									until (workspace.Map.HellDimension.Torch1.Particles.Position - Root.Position).Magnitude < 5 or not _G.CDK_YM;
-									task.wait(1); _G.T2Yama = true;
-								end;
-								-- Tocha 2
-								if not _G.T3Yama then
-									repeat task.wait();
-										_tp(workspace.Map.HellDimension.Torch2.Particles.CFrame);
-										for _, desc in pairs(workspace.Map.HellDimension:GetDescendants()) do
-											if desc:IsA("ProximityPrompt") then fireproximityprompt(desc); end;
-										end;
-									until (workspace.Map.HellDimension.Torch2.Particles.Position - Root.Position).Magnitude < 5 or not _G.CDK_YM;
-									task.wait(1); _G.T3Yama = true;
-								end;
-								-- Tocha 3
-								repeat task.wait();
-									_tp(workspace.Map.HellDimension.Torch3.Particles.CFrame);
-									for _, desc in pairs(workspace.Map.HellDimension:GetDescendants()) do
-										if desc:IsA("ProximityPrompt") then fireproximityprompt(desc); end;
-									end;
-								until EvilProg() == 3 or not _G.CDK_YM;
-								-- Boss
-								for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-									if (enemy:FindFirstChild("HumanoidRootPart") and (enemy.HumanoidRootPart.Position - workspace.Map.HellDimension.Spawn.Position).Magnitude <= 300) then
-										repeat task.wait(); Attack.Kill(enemy, _G.CDK_YM); until not _G.CDK_YM or enemy.Humanoid.Health <= 0 or not enemy.Parent;
-									end;
-								end;
-							else
-								-- Matar Soul Reaper para entrar na Hell Dimension
-								local sr = GetConnectionEnemies("Soul Reaper");
-								if sr then
-									repeat task.wait(); _tp(sr.HumanoidRootPart.CFrame); Attack.Kill(sr, _G.CDK_YM); until sr.Humanoid.Health <= 0 or not _G.CDK_YM or not sr.Parent;
-								else
-									_tp(CFrame.new(-9515.2255859375, 164.0062255859375, 5785.38330078125));
-								end;
-							end;
-						end;
-					end;
-				end;
-			end;
-		end);
-	end;
-end);
-
-Tabs.ItemsTab:Toggle({
-	Title = "Auto CDK - Yama Quest",
-	Desc = "Automatiza quest do Yama para o CDK (Sea 3)",
-	Value = false,
-	Callback = function(state)
-		_G.CDK_YM = state;
-		if not state then _G.T1Yama=false; _G.T2Yama=false; _G.T3Yama=false; end;
-	end
-});
-
--- ══════════════════════════════════════════════
--- AUTO CDK - TUSHITA (Eclipse)
--- ══════════════════════════════════════════════
-_G.CDK_TS = false;
-_G.DoneT1 = false;
-_G.DoneT2 = false;
-_G.DoneT3 = false;
-
-task.spawn(function()
-	local replicated = game:GetService("ReplicatedStorage");
-	local LP = game:GetService("Players").LocalPlayer;
-	while wait() do
-		pcall(function()
-			if _G.CDK_TS then
-				local Root = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart");
-				if not Root then return; end;
-				local function _tp(cf) Root.CFrame = cf; end;
-				local function CDKProg() return replicated.Remotes.CommF_:InvokeServer("CDKQuest","Progress"); end;
-				local function GoodProg() local p = CDKProg(); return p and tonumber(p["Good"]) or nil; end;
-
-				if tostring(replicated.Remotes.CommF_:InvokeServer("CDKQuest","OpenDoor")) ~= "opened" then
-					task.wait(0.7);
-					replicated.Remotes.CommF_:InvokeServer("CDKQuest","OpenDoor");
-					task.wait(0.3);
-					replicated.Remotes.CommF_:InvokeServer("CDKQuest","OpenDoor", true);
-				else
-					local finished = CDKProg() and CDKProg()["Finished"];
-					if finished == nil then
-						replicated.Remotes.CommF_:InvokeServer("CDKQuest","StartTrial","Good");
-					elseif finished == false then
-						local gv = GoodProg();
-						if gv == -3 then
-							-- Stage 1: visitar 3 Luxury Boat Dealers
-							local pts = {
-								CFrame.new(-4602.5107421875, 16.446542739868164, -2880.998046875),
-								CFrame.new(4001.185302734375, 10.089399337768555, -2654.86328125),
-								CFrame.new(-9530.763671875, 7.245208740234375, -8375.5087890625)
-							};
-							for _, pt in ipairs(pts) do
-								repeat task.wait(); _tp(pt); until (pt.Position - Root.Position).Magnitude <= 10 or GoodProg() == 1 or not _G.CDK_TS;
-								if (pt.Position - Root.Position).Magnitude <= 10 then
-									task.wait(0.7);
-									replicated.Remotes.CommF_:InvokeServer("CDKQuest","BoatQuest", workspace.NPCs:FindFirstChild("Luxury Boat Dealer"),"Check");
-									task.wait(0.5);
-									replicated.Remotes.CommF_:InvokeServer("CDKQuest","BoatQuest", workspace.NPCs:FindFirstChild("Luxury Boat Dealer"));
-								end;
-								task.wait(1);
-							end;
-						elseif gv == -4 then
-							-- Stage 2: mais quests de boat
-							local pts2 = {
-								CFrame.new(-9530.763671875, 7.245208740234375, -8375.5087890625),
-								CFrame.new(4001.185302734375, 10.089399337768555, -2654.86328125),
-							};
-							for _, pt in ipairs(pts2) do
-								repeat task.wait(); _tp(pt); until (pt.Position - Root.Position).Magnitude <= 10 or GoodProg() == 2 or not _G.CDK_TS;
-								if (pt.Position - Root.Position).Magnitude <= 10 then
-									task.wait(0.7);
-									replicated.Remotes.CommF_:InvokeServer("CDKQuest","BoatQuest", workspace.NPCs:FindFirstChild("Luxury Boat Dealer"),"Check");
-									task.wait(0.5);
-									replicated.Remotes.CommF_:InvokeServer("CDKQuest","BoatQuest", workspace.NPCs:FindFirstChild("Luxury Boat Dealer"));
-								end;
-								task.wait(1);
-							end;
-						elseif gv == -5 then
-							-- Stage 3: Heavenly Dimension - ativar proximityPrompts
-							_G.DoneT1 = false; _G.DoneT2 = false; _G.DoneT3 = false;
-							repeat task.wait();
-								_tp(CFrame.new(-22637.291015625, 5281.365234375, 3749.28857421875));
-								for _, desc in pairs(workspace.Map.HeavenlyDimension:GetDescendants()) do
-									if desc:IsA("ProximityPrompt") then fireproximityprompt(desc); end;
-								end;
-							until (CFrame.new(-22637.291015625, 5281.365234375, 3749.28857421875).Position - Root.Position).Magnitude < 5 or not _G.CDK_TS;
-							task.wait(2); _G.DoneT1 = true;
-
-							repeat task.wait();
-								_tp(CFrame.new(-22637.291015625, 5281.365234375, 3749.28857421875));
-								for _, desc in pairs(workspace.Map.HeavenlyDimension:GetDescendants()) do
-									if desc:IsA("ProximityPrompt") then fireproximityprompt(desc); end;
-								end;
-							until (CFrame.new(-22637.291015625, 5281.365234375, 3749.28857421875).Position - Root.Position).Magnitude < 5 or not _G.CDK_TS;
-							task.wait(2); _G.DoneT2 = true;
-
-							repeat task.wait();
-								_tp(CFrame.new(-22791.14453125, 5277.16552734375, 3764.570068359375));
-								for _, desc in pairs(workspace.Map.HeavenlyDimension:GetDescendants()) do
-									if desc:IsA("ProximityPrompt") then fireproximityprompt(desc); end;
-								end;
-							until (CFrame.new(-22791.14453125, 5277.16552734375, 3764.570068359375).Position - Root.Position).Magnitude < 5 or not _G.CDK_TS;
-							task.wait(2); _G.DoneT3 = true;
-
-							-- Boss
-							for _, enemy in pairs(workspace.Enemies:GetChildren()) do
-								if enemy:FindFirstChild("HumanoidRootPart") and (enemy.HumanoidRootPart.Position - CFrame.new(-22695.7012, 5270.93652, 3814.42847).Position).Magnitude <= 300 then
-									repeat task.wait(); Attack.Kill(enemy, _G.CDK_TS); until not _G.CDK_TS or enemy.Humanoid.Health <= 0 or not enemy.Parent;
-								end;
-							end;
-						end;
-					end;
-				end;
-			end;
-		end);
-	end;
-end);
-
-Tabs.ItemsTab:Toggle({
-	Title = "Auto CDK - Tushita Quest",
-	Desc = "Automatiza quest do Tushita para o CDK (Sea 3)",
-	Value = false,
-	Callback = function(state)
-		_G.CDK_TS = state;
-		if not state then _G.DoneT1=false; _G.DoneT2=false; _G.DoneT3=false; end;
-	end
-});
-
--- Auto CDK - Etapa Final (luta contra boss)
-_G.CDK = false;
-task.spawn(function()
-	local replicated = game:GetService("ReplicatedStorage");
-	while wait() do
-		pcall(function()
-			if _G.CDK then
-				replicated.Remotes.CommF_:InvokeServer("CDKQuest","Progress","Good");
-				replicated.Remotes.CommF_:InvokeServer("CDKQuest","Progress","Evil");
-				replicated.Remotes.CommF_:InvokeServer("CDKQuest","StartTrial","Boss");
-				local boss = GetConnectionEnemies("Cursed Skeleton Boss") or GetConnectionEnemies("Cursed Dual Boss");
-				if boss then
-					repeat task.wait(); Attack.Kill(boss, _G.CDK); until not _G.CDK or not boss.Parent or boss.Humanoid.Health <= 0;
-					WindUI:Notify({Title="CDK!", Content="Cursed Dual Katana obtida!", Icon="star", Duration=7});
-					_G.CDK = false;
-				end;
-			end;
-		end);
-	end;
-end);
-Tabs.ItemsTab:Toggle({
-	Title = "Auto CDK - Last Quest (Boss)",
-	Desc = "Luta final CDK - requer Yama e Tushita equipados",
-	Value = false,
-	Callback = function(state)
-		_G.CDK = state;
-	end
-});
 AutoRengokuToggle = Tabs.ItemsTab:Toggle({
 	Title = "Auto Rengoku",
 	Desc = "Function Sea 2 Only",
@@ -9086,8 +8485,31 @@ TweenToMirageIslandToggle = Tabs.RaceTab:Toggle({
 		(getgenv()).SaveSetting();
 	end
 });
--- Auto Blue Gear foi movido para a Tab Islands (SeaStackTab)
--- Nao aparece mais aqui na Tab Race
+FindBlueGearToggle = Tabs.RaceTab:Toggle({
+	Title = "Find Blue Gear",
+	Value = _G.Settings.Race["Find Blue Gear"],
+	Callback = function(state)
+		_G.Settings.Race["Find Blue Gear"] = state;
+		(getgenv()).SaveSetting();
+	end
+});
+spawn(function()
+	pcall(function()
+		while wait(0.2) do
+			if _G.Settings.Race["Find Blue Gear"] then
+				if (game:GetService("Workspace")).Map:FindFirstChild("MysticIsland") then
+					for i, v in pairs((game:GetService("Workspace")).Map.MysticIsland:GetChildren()) do
+						if v:IsA("MeshPart") then
+							if v.Material == Enum.Material.Neon then
+								TweenPlayer(v.CFrame);
+							end;
+						end;
+					end;
+				end;
+			end;
+		end;
+	end);
+end);
 LookMoonAbilityToggle = Tabs.RaceTab:Toggle({
 	Title = "Look Moon & use Ability",
 	Value = _G.Settings.Race["Look Moon Ability"],
@@ -10052,13 +9474,9 @@ local PortalIslands = {
 	["Sky Island 2"]         = Vector3.new(-4607.82275, 872.54248, -1667.55688),
 	["Sky Island 3"]         = Vector3.new(-7894.6176757813, 5547.1416015625, -380.29119873047),
 	["Under Water Island"]   = Vector3.new(61163.8515625, 11.6796875, 1819.7841796875),
-	["Under Water City"]     = Vector3.new(61163.8515625, 11.6796875, 1819.7841796875),
 	["Castle On The Sea"]    = Vector3.new(-5083.26025390625, 314.6056823730469, -3175.673095703125),
 	["Mansion"]              = Vector3.new(-12471.169921875, 374.94024658203, -7551.677734375),
 	["Hydra Island"]         = Vector3.new(5643.4526367188, 1013.0858154297, -340.51025390625),
-	["Tiki Outpost"]         = Vector3.new(-16490.18, 55.77, 1768.44),
-	["Entrance of Cisne"]    = Vector3.new(923.21252441406, 126.9760055542, 32852.83203125),
-	["Cursed Ship"]          = Vector3.new(923.21252441406, 126.9760055542, 32852.83203125),
 };
 SelectedTeleportIslandDropdown = Tabs.TeleportTab:Dropdown({
 	Title = "Choose Island",
@@ -10070,15 +9488,47 @@ SelectedTeleportIslandDropdown = Tabs.TeleportTab:Dropdown({
 	end
 });
 
--- Teleport To Island removido (usar Tween To Island ou Bypass Teleport)
-_G.TeleportIsland = false;
+-- Teleport To Island (CFrame instantâneo)
+AutoTeleportToIslandToggle = Tabs.TeleportTab:Toggle({
+	Title = "Teleport To Island",
+	Desc = "Teleporte instantâneo para a ilha selecionada",
+	Value = false,
+	Callback = function(state)
+		_G.TeleportIsland = state;
+		if not state then StopTween(false); end;
+		if state then
+			task.spawn(function()
+				repeat
+					pcall(function()
+						if not _G.SelectIsland then return; end;
+						local hrp = game.Players.LocalPlayer.Character
+							and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
+						if not hrp then return; end;
+						if PortalIslands[_G.SelectIsland] then
+							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
+								"requestEntrance", PortalIslands[_G.SelectIsland]
+							);
+							task.wait(0.8);
+						else
+							local target = workspace._WorldOrigin.Locations:FindFirstChild(_G.SelectIsland);
+							if target then
+								hrp.CFrame = target.CFrame * CFrame.new(0, 5, 0);
+							end;
+						end;
+					end);
+					task.wait(0.5);
+				until not _G.TeleportIsland;
+			end);
+		end;
+	end
+});
 
--- BYPASS TELEPORT (teleporte instantâneo com auto-reset até chegar)
+-- BYPASS TELEPORT (teleporte instantaneo que nao para o tween)
 _G.BypassTeleportActive = false;
 local _bypassLoopConn = nil;
 Tabs.TeleportTab:Toggle({
 	Title = "Bypass Teleport",
-	Desc = "Teleporte instantâneo + auto-reset até confirmar chegada na ilha",
+	Desc = "Teleporte instantaneo para o NPC/ilha selecionada (nao para farms)",
 	Value = false,
 	Callback = function(state)
 		_G.BypassTeleportActive = state;
@@ -10086,12 +9536,10 @@ Tabs.TeleportTab:Toggle({
 			_bypassLoopConn = task.spawn(function()
 				while _G.BypassTeleportActive do
 					pcall(function()
-						if not (_G.SelectIsland and _G.SelectIsland ~= "") then return; end;
 						local plr = game.Players.LocalPlayer;
 						local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
 						if not hrp then return; end;
-
-						local function doTp()
+						if _G.SelectIsland and _G.SelectIsland ~= "" then
 							if PortalIslands and PortalIslands[_G.SelectIsland] then
 								(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", PortalIslands[_G.SelectIsland]);
 							else
@@ -10099,33 +9547,8 @@ Tabs.TeleportTab:Toggle({
 								if target then hrp.CFrame = target.CFrame * CFrame.new(0,5,0); end;
 							end;
 						end;
-
-						local function isOnIsland()
-							local target = workspace._WorldOrigin.Locations:FindFirstChild(_G.SelectIsland);
-							if not target then return false; end;
-							hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
-							return hrp and (hrp.Position - target.Position).Magnitude < 300;
-						end;
-
-						-- Teleportar e verificar
-						doTp();
-						task.wait(0.8);
-
-						-- Se ainda não chegou, resetar e repetir
-						if not isOnIsland() then
-							-- Reset do personagem
-							pcall(function()
-								plr.Character.Humanoid.Health = 0;
-							end);
-							task.wait(2.5); -- esperar respawn
-							hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
-							if hrp then
-								doTp();
-								task.wait(1);
-							end;
-						end;
 					end);
-					task.wait(0.3);
+					task.wait(0.5);
 				end;
 			end);
 		else
@@ -11593,152 +11016,6 @@ spawn(function()
 		end;
 	end);
 end);
--- ══════════════════════════════════════════════
--- AUTO FIND MIRAGE ISLAND
--- ══════════════════════════════════════════════
-_G.FindMirageActive = false;
-Tabs.SeaStackTab:Toggle({
-	Title = "Auto Find Mirage Island",
-	Desc = "Compra barco na Tiki, navega pelo mar 4 até a Mirage spawnar",
-	Value = false,
-	Callback = function(state)
-		_G.FindMirageActive = state;
-		if state then
-			task.spawn(function()
-				local replicated = game:GetService("ReplicatedStorage");
-				local Players = game:GetService("Players");
-				local LP = Players.LocalPlayer;
-				local TikiBoatPos = CFrame.new(-16927.451171875, 9.0863618850708, 433.8642883300781);
-				local patrolA = CFrame.new(-80000, 9, 5000);
-				local patrolB = CFrame.new(-80000, 9, -5000);
-
-				local function buyBoatTiki()
-					-- Tween to Tiki boat dealer
-					TweenPlayer(TikiBoatPos);
-					repeat task.wait(0.1) until
-						not _G.FindMirageActive or
-						(LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") and
-						(LP.Character.HumanoidRootPart.Position - TikiBoatPos.Position).Magnitude < 20);
-					if not _G.FindMirageActive then return; end;
-					replicated.Remotes.CommF_:InvokeServer("BuyBoat", _G.Settings.SeaEvent["Selected Boat"] or "Rowing Boat");
-					task.wait(1.5);
-				end;
-
-				while _G.FindMirageActive do
-					pcall(function()
-						-- Check if Mirage already spawned
-						if workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island") then
-							-- Go to center of Mirage
-							local mirLoc = workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island");
-							if mirLoc and LP.Character and LP.Character:FindFirstChild("HumanoidRootPart") then
-								LP.Character.HumanoidRootPart.CFrame = mirLoc.CFrame * CFrame.new(0, 5, 0);
-							end;
-							WindUI:Notify({Title="Mirage Island!", Content="Mirage Island encontrada! Teleportando...", Icon="map-pin", Duration=5});
-							_G.FindMirageActive = false;
-							return;
-						end;
-
-						-- Buy boat if not have one
-						if not workspace.Boats:FindFirstChild(LP.Name) and not workspace.Boats:FindFirstChild(_G.Settings.SeaEvent["Selected Boat"] or "Rowing Boat") then
-							buyBoatTiki();
-						end;
-
-						-- Get in the boat and patrol
-						local boat = workspace.Boats:FindFirstChild(LP.Name) or workspace.Boats:FindFirstChild(_G.Settings.SeaEvent["Selected Boat"] or "Rowing Boat");
-						if boat and boat:FindFirstChild("VehicleSeat") then
-							local seat = boat.VehicleSeat;
-							-- Sit in boat
-							if LP.Character and LP.Character:FindFirstChild("Humanoid") and LP.Character.Humanoid.Sit == false then
-								TweenPlayer(seat.CFrame * CFrame.new(0,1,0));
-								task.wait(0.5);
-							end;
-							-- Patrol
-							if LP.Character and LP.Character:FindFirstChild("Humanoid") and LP.Character.Humanoid.Sit then
-								TweenBoat(patrolA);
-								repeat task.wait(0.5) until
-									not _G.FindMirageActive or
-									workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island") or
-									not boat.Parent;
-								if not _G.FindMirageActive or workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island") then return; end;
-								TweenBoat(patrolB);
-								repeat task.wait(0.5) until
-									not _G.FindMirageActive or
-									workspace._WorldOrigin.Locations:FindFirstChild("Mirage Island") or
-									not boat.Parent;
-							else
-								-- Boat broke, buy another
-								buyBoatTiki();
-							end;
-						else
-							buyBoatTiki();
-						end;
-					end);
-					task.wait(0.2);
-				end;
-			end);
-		end;
-	end
-});
-
--- ══════════════════════════════════════════════
--- AUTO BLUE GEAR (movido de RaceTab)
--- ══════════════════════════════════════════════
-_G.AutoBlueGearActive = false;
-Tabs.SeaStackTab:Toggle({
-	Title = "Auto Blue Gear",
-	Desc = "Vai ao ponto mais alto da Mirage, olha para a lua e pega a engrenagem azul",
-	Value = false,
-	Callback = function(state)
-		_G.AutoBlueGearActive = state;
-		if state then
-			task.spawn(function()
-				local replicated = game:GetService("ReplicatedStorage");
-				local LP = game:GetService("Players").LocalPlayer;
-
-				while _G.AutoBlueGearActive do
-					pcall(function()
-						-- Go to highest point of Mirage Island
-						if workspace.Map:FindFirstChild("MysticIsland") then
-							local highestPart = GetHighestPoint();
-							if highestPart then
-								local highCF = highestPart.CFrame * CFrame.new(0, 211.88, 0);
-								TweenPlayer(highCF);
-								task.wait(1);
-								-- Look at moon
-								local moonDir = game.Lighting:GetMoonDirection();
-								local hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart");
-								if hrp then
-									hrp.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + moonDir);
-								end;
-								-- Wait for gear to spawn (moon glows = blue gear spawns in workspace)
-								repeat
-									task.wait(0.1);
-									-- Keep looking at moon
-									hrp = LP.Character and LP.Character:FindFirstChild("HumanoidRootPart");
-									moonDir = game.Lighting:GetMoonDirection();
-									if hrp then hrp.CFrame = CFrame.lookAt(hrp.Position, hrp.Position + moonDir); end;
-								until not _G.AutoBlueGearActive or workspace:FindFirstChild("BlueGear") or workspace.Map:FindFirstChild("BlueGear");
-
-								-- Teleport to gear
-								local gear = workspace:FindFirstChild("BlueGear") or workspace.Map:FindFirstChild("BlueGear");
-								if gear and hrp then
-									hrp.CFrame = gear.CFrame * CFrame.new(0, 3, 0);
-									task.wait(1.5);
-									WindUI:Notify({Title="Blue Gear!", Content="Quest completa!", Icon="star", Duration=5});
-									_G.AutoBlueGearActive = false;
-								end;
-							end;
-						else
-							task.wait(2);
-						end;
-					end);
-					task.wait(0.5);
-				end;
-			end);
-		end;
-	end
-});
-
 SeaBeastSeaStackSection = Tabs.SeaStackTab:Section({
 	Title = "Sea Beasts",
 	TextXAlignment = "Left"
@@ -12427,7 +11704,7 @@ FruitNotification = Tabs.FruitTab:Toggle({
 	Title = "Fruit Notification",
 	Value = _G.Settings.Fruit["Fruit Notification"],
 	Callback = function(state)
-		_G.Settings.Fruit["Fruit Notification"] = state;
+		_G.Settings.Fruit["Fruit Notification"] = value;
 		(getgenv()).SaveSetting();
 	end
 });
@@ -12447,65 +11724,126 @@ spawn(function()
 		end;
 	end;
 end);
--- ╔════════════════════════════════════════════════════════╗
--- ║  AUTO TWEEN TO FRUIT — Sistema Completo (TRon Void)   ║
--- ║  • Detecta spawn instantaneamente via ChildAdded       ║
--- ║  • Pausa Farm/Teleporte ao detectar fruta              ║
--- ║  • Ilhas especiais Sea 2: usa portal Don Flamingo      ║
--- ║  • Ilhas especiais Sea 3: Turtle, Castle, Tiki, Hydra  ║
--- ║  • Retoma Farm/Teleporte após pegar ou desaparecer     ║
--- ╚════════════════════════════════════════════════════════╝
+-- Quando Tween To Fruit está ativo e uma fruta aparece,
+-- para tudo que envolve farm/teleporte imediatamente.
+-- Detecta portais de Sea 2 (Don Flamingo) e Sea 3
+-- (Mansao, Castle, Hydra, Tiki) para navegacao correta.
 _G.FruitInterrupt = false;
-_G._FruitSavedState = {};
 
--- ─── Coordenadas de ilhas e portais ─────────────────────
--- Sea 2
-local _S2_DonFlamingo_Entrance = Vector3.new(3793.5, 15.0, -3394.7); -- Portal Don Flamingo (Sea 2 overworld)
-local _S2_KOR_Inside           = Vector3.new(-5685.5, 320.4, -3246.5); -- Dentro de Kingdom of Roses
-local _S2_Mansion_Portal       = Vector3.new(-5768.0, 322.0, -3248.0); -- Portal Azul para Mansion (dentro de KoR)
-local _S2_Mansion_Inside       = Vector3.new(-7118.0, 162.0, -3246.5); -- Dentro da Mansion
+-- Posicoes dos portais conhecidos
+local _PORTAL_DON_FLAMINGO = CFrame.new(-5685.5, 318.4, -3246.5); -- Sea 2 - Don Flamingo
+local _PORTAL_MANSION_S3   = CFrame.new(-12471, 374.9, -7551.6);  -- Sea 3 - Mansion
+local _PORTAL_CASTLE_S3    = CFrame.new(-26880, 22.8, 473.1);     -- Sea 3 - Castle/Tiki
+local _PORTAL_HYDRA_S3     = CFrame.new(5643.4, 1013, -340.5);    -- Sea 3 - Hydra Island
 
--- Sea 3
-local _S3_Hydra_Center         = Vector3.new(5650.0, 1010.0, -340.0);
-local _S3_CastleOnSea_Center   = Vector3.new(-26800.0, 22.0, 460.0);
-local _S3_TikiOutpost_Center   = Vector3.new(-26540.0, 22.0, 450.0);
-local _S3_Mansion_Center       = Vector3.new(-12471.0, 374.9, -7551.6);
-
--- ─── Detecta em qual zona a fruta está ──────────────────
-local function _getFruitZone(fruitPos)
-	local function near(center, radius)
-		return (fruitPos - center).Magnitude < radius;
-	end;
-	if World2 then
-		-- Kingdom of Rose / Mansion (dentro de KoR, X muito negativo)
-		if fruitPos.X < -5000 and fruitPos.Z < -2500 then
-			-- Se for ainda mais para a esquerda = Mansion
-			if fruitPos.X < -6500 then
-				return "MANSION_S2";
-			end;
-			return "KOR_S2";
+local function _getFruitInWorkspace()
+	for _, v in pairs(workspace:GetChildren()) do
+		if string.find(v.Name, "Fruit") and v:FindFirstChild("Handle") then
+			return v;
 		end;
-	elseif World3 then
-		if near(_S3_Hydra_Center, 1500)         then return "HYDRA_S3"; end;
-		if near(_S3_CastleOnSea_Center, 2000)   then return "CASTLE_S3"; end;
-		if near(_S3_TikiOutpost_Center, 1500)   then return "TIKI_S3"; end;
-		if near(_S3_Mansion_Center, 2000)       then return "MANSION_S3"; end;
 	end;
-	-- Turtle Island: procura no Locations (qualquer Sea)
-	pcall(function()
-		local locs = workspace._WorldOrigin and workspace._WorldOrigin.Locations;
-		if locs then
-			local turtle = locs:FindFirstChild("Turtle Island");
-			if turtle and (fruitPos - turtle.Position).Magnitude < 800 then
-				return "TURTLE";
-			end;
-		end;
-	end);
-	return "NORMAL";
+	return nil;
 end;
 
--- ─── Desancora e libera o personagem ────────────────────
-local function _freePlayer()
+local function _getPortalForFruitPos(fruitPos)
+	-- Verifica se a fruta está em zona de portal (Sea 3)
+	-- Mansao / Castle / Hydra / Tiki = usa tween direto pois sao portais de mundo
+	-- Sea 2 = Don Flamingo se fruta estiver no Kingdom of Rose ou proximidades
+	local function dist(cf) return (fruitPos - cf.Position).Magnitude; end;
+	if World3 then
+		if dist(_PORTAL_MANSION_S3) < 3000 then return _PORTAL_MANSION_S3; end;
+		if dist(_PORTAL_CASTLE_S3) < 4000 then return _PORTAL_CASTLE_S3; end;
+		if dist(_PORTAL_HYDRA_S3) < 3000 then return _PORTAL_HYDRA_S3; end;
+	elseif World2 then
+		if dist(_PORTAL_DON_FLAMINGO) < 5000 then return _PORTAL_DON_FLAMINGO; end;
+	end;
+	return nil;
+end;
+
+local function _tweenToFruitAndPick(fruit)
+	if not fruit or not fruit.Parent or not fruit:FindFirstChild("Handle") then return; end;
+	local char = game.Players.LocalPlayer.Character;
+	if not char then return; end;
+	local hrp = char:FindFirstChild("HumanoidRootPart");
+	local hum = char:FindFirstChildOfClass("Humanoid");
+	if not hrp or not hum then return; end;
+
+	-- Garante que o jogador pode se mover antes de fazer tween
+	pcall(function()
+		hrp.Anchored = false;
+		hum.WalkSpeed = 16;
+		hum.JumpPower = 50;
+	end);
+
+	local fruitPos = fruit.Handle.Position;
+	local portal = _getPortalForFruitPos(fruitPos);
+	local TweenSvc = game:GetService("TweenService");
+
+	-- Se a fruta estiver em zona de portal e o portal estiver desbloqueado,
+	-- vai ao portal primeiro e depois tween direto à fruta
+	if portal then
+		local distToPortal = (hrp.Position - portal.Position).Magnitude;
+		if distToPortal > 100 then
+			local dur1 = math.max(0.5, distToPortal / (_G.Settings.Setting["Player Tween Speed"] or 350));
+			local tw1 = TweenSvc:Create(hrp, TweenInfo.new(dur1, Enum.EasingStyle.Linear), {CFrame = portal});
+			tw1:Play();
+			local t1 = 0;
+			while tw1.PlaybackState == Enum.PlaybackState.Playing do
+				task.wait(0.05); t1 = t1 + 0.05;
+				if t1 > dur1 + 1 then break; end;
+			end;
+			task.wait(0.3);
+		end;
+	end;
+
+	-- Tween final até a fruta
+	if not fruit or not fruit.Parent or not fruit:FindFirstChild("Handle") then return; end;
+	local dist = (hrp.Position - fruit.Handle.Position).Magnitude;
+	local dur = math.max(0.3, dist / (_G.Settings.Setting["Player Tween Speed"] or 350));
+	local info = TweenInfo.new(dur, Enum.EasingStyle.Linear);
+	local tween = TweenSvc:Create(hrp, info, {CFrame = fruit.Handle.CFrame});
+	tween:Play();
+	local elapsed = 0;
+	while tween.PlaybackState == Enum.PlaybackState.Playing do
+		task.wait(0.05);
+		elapsed = elapsed + 0.05;
+		if elapsed > dur + 1 then break; end;
+	end;
+	-- Pega a fruta tocando nela
+	pcall(function()
+		if fruit and fruit.Parent and fruit:FindFirstChild("Handle") then
+			fruit.Handle.CFrame = hrp.CFrame;
+		end;
+	end);
+	-- Restaura movimento do player após pegar fruta
+	pcall(function()
+		hrp.Anchored = false;
+		hum.WalkSpeed = 16;
+		hum.JumpPower = 50;
+	end);
+end;
+
+local function _pauseFarmForFruit(fruit)
+	if _G.FruitInterrupt then return; end;
+	_G.FruitInterrupt = true;
+	-- Salva estados atuais
+	local sv_EclipseStart = _G.EclipseStartFarm;
+	local sv_EclipseLevel = _G.EclipseLevel;
+	local sv_EclipseBone  = _G.EclipseFarm_Bone;
+	local sv_EclipseCake  = _G.EclipseFarm_Cake;
+	local sv_AutoFarm     = _G.Settings.Main["Auto Farm"];
+	local sv_Mastery      = _G.Settings.Main["Auto Farm Fruit Mastery"];
+	local sv_Sword        = _G.Settings.Main["Auto Farm Sword Mastery"];
+	-- Para tudo e desancora o personagem antes de mover
+	_G.EclipseStartFarm = false;
+	_G.EclipseLevel     = false;
+	_G.EclipseFarm_Bone = false;
+	_G.EclipseFarm_Cake = false;
+	_G.Settings.Main["Auto Farm"] = false;
+	_G.Settings.Main["Auto Farm Fruit Mastery"] = false;
+	_G.Settings.Main["Auto Farm Sword Mastery"] = false;
+	StopTween(false);
+	-- Garante que personagem está livre para se mover
 	pcall(function()
 		local char = game.Players.LocalPlayer.Character;
 		if char then
@@ -12515,253 +11853,40 @@ local function _freePlayer()
 			if hum then hum.WalkSpeed = 16; hum.JumpPower = 50; end;
 		end;
 	end);
-end;
-
--- ─── TP instantâneo (curto alcance — seguro) ────────────
-local function _instantTP(pos)
-	pcall(function()
-		local char = game.Players.LocalPlayer.Character;
-		if char and char:FindFirstChild("HumanoidRootPart") then
-			char.HumanoidRootPart.CFrame = CFrame.new(pos) * CFrame.new(0, 3, 0);
-		end;
-	end);
-end;
-
--- ─── Tween suave até uma CFrame ─────────────────────────
-local function _smoothTween(targetCF, speed)
-	local char = game.Players.LocalPlayer.Character;
-	if not char then return; end;
-	local hrp = char:FindFirstChild("HumanoidRootPart");
-	if not hrp then return; end;
-	local dist = (hrp.Position - targetCF.Position).Magnitude;
-	local dur  = math.max(0.3, dist / (speed or _G.Settings.Setting["Player Tween Speed"] or 350));
-	local ts   = game:GetService("TweenService");
-	local tw   = ts:Create(hrp, TweenInfo.new(dur, Enum.EasingStyle.Linear), {CFrame = targetCF});
-	tw:Play();
-	local t = 0;
-	while tw.PlaybackState == Enum.PlaybackState.Playing do
-		task.wait(0.05); t = t + 0.05;
-		if t > dur + 2 then break; end;
-	end;
-end;
-
--- ─── Lógica principal: vai até a fruta com portal correto ─
-local function _tweenToFruitSmart(fruit)
-	if not fruit or not fruit.Parent or not fruit:FindFirstChild("Handle") then return; end;
-	local fruitPos = fruit.Handle.Position;
-	local zone = _getFruitZone(fruitPos);
-	_freePlayer();
-
-	if zone == "KOR_S2" then
-		-- ▶ Sea 2: Portal Don Flamingo → Kingdom of Roses → Fruta
-		FHNotify("Tween Fruit", "🌹 Fruta em KoR! Portal Don Flamingo...", 4);
-		_instantTP(_S2_DonFlamingo_Entrance);
-		task.wait(0.4);
-		-- Tenta usar o remote de entrada (portal Don Flamingo → KoR)
-		pcall(function()
-			game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", _S2_KOR_Inside);
-		end);
-		task.wait(0.6);
-		-- TP direto para dentro de KoR caso remote falhe
-		_instantTP(_S2_KOR_Inside);
-		task.wait(0.4);
-		_freePlayer();
-
-	elseif zone == "MANSION_S2" then
-		-- ▶ Sea 2: Portal Don Flamingo → KoR → Portal Azul → Mansion → Fruta
-		FHNotify("Tween Fruit", "🏰 Fruta na Mansion! Entrando pelo portal azul...", 5);
-		-- Passo 1: TP para porta Don Flamingo overworld
-		_instantTP(_S2_DonFlamingo_Entrance);
-		task.wait(0.4);
-		-- Passo 2: Entra em KoR
-		pcall(function()
-			game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", _S2_KOR_Inside);
-		end);
-		task.wait(0.6);
-		_instantTP(_S2_KOR_Inside);
-		task.wait(0.5);
-		-- Passo 3: Portal Azul (KoR → Mansion)
-		pcall(function()
-			game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("requestEntrance", _S2_Mansion_Inside);
-		end);
-		task.wait(0.6);
-		_instantTP(_S2_Mansion_Inside);
-		task.wait(0.4);
-		_freePlayer();
-		FHNotify("Tween Fruit", "🏰 Dentro da Mansion! Indo até a fruta...", 3);
-
-	elseif zone == "HYDRA_S3" or zone == "CASTLE_S3" or zone == "TIKI_S3" or zone == "MANSION_S3" or zone == "TURTLE" then
-		-- ▶ Ilhas especiais Sea 3 / Turtle: TP direto para perto da fruta
-		local names = {HYDRA_S3="Hydra Island", CASTLE_S3="Castle on Sea", TIKI_S3="Tiki Outpost", MANSION_S3="Mansion", TURTLE="Turtle Island"};
-		FHNotify("Tween Fruit", "🏝 Fruta em " .. (names[zone] or zone) .. "! Teleportando...", 4);
-		_instantTP(fruitPos);
-		task.wait(0.5);
-		_freePlayer();
-
-	else
-		-- ▶ Normal: tween suave direto até a fruta
-		FHNotify("Tween Fruit", "🍎 Fruta detectada! Indo buscar...", 3);
-	end;
-
-	-- Tween final até a fruta (se ainda existir)
-	if fruit and fruit.Parent and fruit:FindFirstChild("Handle") then
-		_smoothTween(fruit.Handle.CFrame);
-		task.wait(0.3);
-		-- Coleta tocando na fruta
-		pcall(function()
-			if fruit and fruit.Parent and fruit:FindFirstChild("Handle") then
-				local char = game.Players.LocalPlayer.Character;
-				if char and char:FindFirstChild("HumanoidRootPart") then
-					fruit.Handle.CFrame = char.HumanoidRootPart.CFrame;
-				end;
-			end;
-		end);
-	else
-		FHNotify("Tween Fruit", "⚠ Fruta desapareceu antes de chegar.", 3);
-	end;
-	_freePlayer();
-end;
-
--- ─── Salva e pausa todos os farms ───────────────────────
-local function _saveFarmState()
-	_G._FruitSavedState = {
-		EclipseStartFarm = _G.EclipseStartFarm,
-		EclipseLevel     = _G.EclipseLevel,
-		EclipseFarm_Bone = _G.EclipseFarm_Bone,
-		EclipseFarm_Cake = _G.EclipseFarm_Cake,
-		AutoFarm         = _G.Settings.Main and _G.Settings.Main["Auto Farm"],
-		AutoFarmFast     = _G.Settings.Main and _G.Settings.Main["Auto Farm Fast"],
-		FruitMastery     = _G.Settings.Main and _G.Settings.Main["Auto Farm Fruit Mastery"],
-		SwordMastery     = _G.Settings.Main and _G.Settings.Main["Auto Farm Sword Mastery"],
-		GunMastery       = _G.Settings.Main and _G.Settings.Main["Auto Farm Gun Mastery"],
-		AutoFarmMon      = _G.Settings.Main and _G.Settings.Main["Auto Farm Mon"],
-		AutoFarmBoss     = _G.Settings.Main and _G.Settings.Main["Auto Farm Boss"],
-		AutoFarmAllBoss  = _G.Settings.Main and _G.Settings.Main["Auto Farm All Boss"],
-		TeleportIsland   = _G.TeleportIsland,
-		TeleportToPlayer = _G.TeleportToPlayer,
-	};
-	_G.EclipseStartFarm = false;
-	_G.EclipseLevel     = false;
-	_G.EclipseFarm_Bone = false;
-	_G.EclipseFarm_Cake = false;
-	if _G.Settings and _G.Settings.Main then
-		_G.Settings.Main["Auto Farm"]              = false;
-		_G.Settings.Main["Auto Farm Fast"]         = false;
-		_G.Settings.Main["Auto Farm Fruit Mastery"]= false;
-		_G.Settings.Main["Auto Farm Sword Mastery"]= false;
-		_G.Settings.Main["Auto Farm Gun Mastery"]  = false;
-		_G.Settings.Main["Auto Farm Mon"]          = false;
-		_G.Settings.Main["Auto Farm Boss"]         = false;
-		_G.Settings.Main["Auto Farm All Boss"]     = false;
-	end;
-	_G.TeleportIsland   = false;
-	_G.TeleportToPlayer = false;
-	pcall(function() StopTween(false); end);
-end;
-
--- ─── Restaura farms após a fruta ────────────────────────
-local function _restoreFarmState()
-	if not (_G.Settings and _G.Settings.Fruit and _G.Settings.Fruit["Tween To Fruit"]) then return; end;
-	local sv = _G._FruitSavedState;
-	if not sv then return; end;
-	_G.EclipseStartFarm = sv.EclipseStartFarm;
-	_G.EclipseLevel     = sv.EclipseLevel;
-	_G.EclipseFarm_Bone = sv.EclipseFarm_Bone;
-	_G.EclipseFarm_Cake = sv.EclipseFarm_Cake;
-	if _G.Settings and _G.Settings.Main then
-		_G.Settings.Main["Auto Farm"]              = sv.AutoFarm;
-		_G.Settings.Main["Auto Farm Fast"]         = sv.AutoFarmFast;
-		_G.Settings.Main["Auto Farm Fruit Mastery"]= sv.FruitMastery;
-		_G.Settings.Main["Auto Farm Sword Mastery"]= sv.SwordMastery;
-		_G.Settings.Main["Auto Farm Gun Mastery"]  = sv.GunMastery;
-		_G.Settings.Main["Auto Farm Mon"]          = sv.AutoFarmMon;
-		_G.Settings.Main["Auto Farm Boss"]         = sv.AutoFarmBoss;
-		_G.Settings.Main["Auto Farm All Boss"]     = sv.AutoFarmAllBoss;
-	end;
-	_G.TeleportIsland   = sv.TeleportIsland;
-	_G.TeleportToPlayer = sv.TeleportToPlayer;
-end;
-
--- ─── Wrapper: pausa farm → vai à fruta → retoma farm ────
-local function _pauseAndFetchFruit(fruit)
-	if _G.FruitInterrupt then return; end;
-	_G.FruitInterrupt = true;
-
-	pcall(function()
-		WindUI:Notify({Title = "🍎 Fruta Detectada!", Content = "Pausando farm e indo buscar a fruta...", Icon = "vegan", Duration = 4});
-	end);
-
-	_saveFarmState();
-	task.wait(0.2);
-
-	-- Espera a fruta estar totalmente carregada
-	local waitCount = 0;
-	while fruit and fruit.Parent and not fruit:FindFirstChild("Handle") and waitCount < 20 do
-		task.wait(0.1); waitCount = waitCount + 1;
-	end;
-
-	if fruit and fruit.Parent then
-		_tweenToFruitSmart(fruit);
-		-- Aguarda a fruta sumir (pega ou despawn)
-		local timeout = 0;
-		while fruit and fruit.Parent and timeout < 30 do
-			task.wait(0.5); timeout = timeout + 0.5;
-		end;
-	end;
-
+	task.wait(0.3);
+	-- Vai buscar a fruta com tween inteligente (portais)
+	_tweenToFruitAndPick(fruit);
 	task.wait(0.3);
 	_G.FruitInterrupt = false;
-	_restoreFarmState();
-
-	pcall(function()
-		WindUI:Notify({Title = "🔄 Farm Retomado", Content = "Fruta coletada/desapareceu. Voltando ao farm!", Icon = "refresh-cw", Duration = 3});
-	end);
+	-- Restaura somente se o toggle ainda estiver ativo
+	if _G.Settings.Fruit["Tween To Fruit"] then
+		_G.EclipseStartFarm = sv_EclipseStart;
+		_G.EclipseLevel     = sv_EclipseLevel;
+		_G.EclipseFarm_Bone = sv_EclipseBone;
+		_G.EclipseFarm_Cake = sv_EclipseCake;
+		_G.Settings.Main["Auto Farm"] = sv_AutoFarm;
+		_G.Settings.Main["Auto Farm Fruit Mastery"] = sv_Mastery;
+		_G.Settings.Main["Auto Farm Sword Mastery"] = sv_Sword;
+	end;
 end;
 
--- ─── Detecta frutas ao spawnar no workspace ─────────────
+-- Detecta fruta ao aparecer no workspace (responde instantaneamente)
 workspace.ChildAdded:Connect(function(child)
 	if _G.Settings.Fruit["Tween To Fruit"]
 	   and not _G.FruitInterrupt
 	   and string.find(child.Name, "Fruit")
-	   and not child.Name:find("FruitNotif") then
+	   and child:FindFirstChild("Handle") then
 		task.spawn(function()
-			task.wait(0.15);
-			if child.Parent then
-				_pauseAndFetchFruit(child);
-			end;
+			task.wait(0.1); -- aguarda Handle estar pronto
+			_pauseFarmForFruit(child);
 		end);
 	end;
 end);
-
--- ─── Loop de verificação para frutas já presentes ───────
-local function _getFruitInWorkspace()
-	for _, v in pairs(workspace:GetChildren()) do
-		if string.find(v.Name, "Fruit") and v:FindFirstChild("Handle") then
-			return v;
-		end;
-	end;
-	return nil;
-end;
-spawn(function()
-	while wait(0.8) do
-		pcall(function()
-			if _G.Settings.Fruit["Tween To Fruit"] and not _G.FruitInterrupt then
-				local fruit = _getFruitInWorkspace();
-				if fruit then
-					task.spawn(function()
-						_pauseAndFetchFruit(fruit);
-					end);
-				end;
-			end;
-		end);
-	end;
-end);
-
 
 -- Teleporta instantaneamente até a fruta (comportamento antigo)
 --  RISCO DE BAN — use por sua conta e risco
 TeleportToFruitToggle = Tabs.FruitTab:Toggle({
-	Title = T("Teleport To Fruit"),
+	Title = "Teleport To Fruit",
 	Desc = " RISCO DE BAN — Teleporta instantâneo para a fruta. Use com cautela.",
 	Value = _G.Settings.Fruit["Teleport To Fruit"],
 	Callback = function(state)
@@ -12801,21 +11926,32 @@ local collectFruits = function()
 end;
 
 TweenToFruitToggle = Tabs.FruitTab:Toggle({
-	Title = T("Tween To Fruit"),
-	Desc = "🍎 Move suavemente até a fruta. Pausa Farm/Teleporte ao spawnar. Suporta portal Don Flamingo (Sea 2) e ilhas especiais (Sea 3).",
+	Title = "Tween To Fruit",
+	Desc = "Move suavemente até a fruta e para o farm quando ela aparecer.",
 	Value = _G.Settings.Fruit["Tween To Fruit"],
 	Callback = function(state)
 		_G.Settings.Fruit["Tween To Fruit"] = state;
 		if not state then
 			_G.FruitInterrupt = false;
-			_G._FruitSavedState = {};
 		end;
 		(getgenv()).SaveSetting();
 	end
 });
--- (loop de verificação já está definido acima no sistema de tween)
+-- Loop de verificação para frutas que já estão no workspace
+spawn(function()
+	while wait(0.5) do
+		if _G.Settings.Fruit["Tween To Fruit"] and not _G.FruitInterrupt then
+			local fruit = _getFruitInWorkspace();
+			if fruit then
+				task.spawn(function()
+					_pauseFarmForFruit(fruit);
+				end);
+			end;
+		end;
+	end;
+end);
 GrabFruitButton = Tabs.FruitTab:Button({
-	Title = T("Grab Fruit"),
+	Title = "Grab Fruit",
 	Callback = function()
 		for i, v in pairs(game.Workspace:GetChildren()) do
 			if v:IsA("Tool") then
