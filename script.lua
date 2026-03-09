@@ -709,7 +709,7 @@ function Library:CreateWindow(Setting)
 	Shadow.ScaleType = Enum.ScaleType.Slice
 	Shadow.SliceCenter = Rect.new(24, 24, 276, 276)
 
-    -- Th?m bi?n ?? l?u th?ng tin section
+    -- Th?m bi?n  l?u th?ng tin section
     local sectionInfo = {}
     
     -- T?o h?m GlobalSearch n?u ch?a t?n t?i
@@ -733,7 +733,7 @@ function Library:CreateWindow(Setting)
                 return
             end
             
-            -- ?n t?t c? tr??c
+            -- ?n t?t c? trc
             for _, control in pairs(getgenv().AllControls) do
                 control.Section.Visible = false
                 control.Element.Visible = false
@@ -746,7 +746,7 @@ function Library:CreateWindow(Setting)
                 end
             end
             
-            -- T?o b?n ?? section
+            -- T?o b?n  section
             local sectionsWithElements = {}
             local elementsInSection = {}
             
@@ -760,7 +760,7 @@ function Library:CreateWindow(Setting)
                 -- Ki?m tra section
                 local sectionFound = string.find(sectionName, searchText, 1, true) ~= nil
                 
-                -- T?o b?n ?? section
+                -- T?o b?n  section
                 if not elementsInSection[control.Section] then
                     elementsInSection[control.Section] = {}
                 end
@@ -770,7 +770,7 @@ function Library:CreateWindow(Setting)
                     sectionFound = sectionFound
                 })
                 
-                -- ??nh d?u section c? ph?n t? kh?p
+                -- nh d?u section c? ph?n t? kh?p
                 if elementFound then
                     sectionsWithElements[control.Section] = true
                 end
@@ -830,7 +830,7 @@ function Library:CreateWindow(Setting)
             
             -- N?u kh?ng t?m th?y g? c?, hi?n th? th?ng b?o
             if not next(foundTabs) then
-                -- C? th? th?m th?ng b?o "Kh?ng t?m th?y k?t qu" ? ??y n?u mu?n
+                -- C? th? th?m th?ng b?o "Kh?ng t?m th?y k?t qu" ? y n?u mu?n
             end
         end
     end
@@ -1556,7 +1556,7 @@ function Library:CreateWindow(Setting)
              Button_1.TextColor3 = Color3.fromRGB(240, 240, 240)
              Button_1.TextSize = 13
 
-             -- UIScale m?c ??nh
+             -- UIScale m?c nh
              UIScale_1.Scale = 1
              
              -- HOVER (ch? ph?ng to)
@@ -1573,7 +1573,7 @@ function Library:CreateWindow(Setting)
              
                 Button_1.MouseButton1Down:Connect(function()
                     
-                    -- L?y k?ch th??c th?c t? c?a ClickArea
+                    -- L?y k?ch thc th?c t? c?a ClickArea
                     local w = ClickArea_1.AbsoluteSize.X
                     local h = ClickArea_1.AbsoluteSize.Y
                     
@@ -1592,7 +1592,7 @@ function Library:CreateWindow(Setting)
                     rippleCorner.CornerRadius = UICorner_3.CornerRadius -- L?y g?c bo t? button
                     rippleCorner.Parent = ripple
                     
-                    -- Animation ripple m? r?ng t? t?m ra ??y ?? button
+                    -- Animation ripple m? r?ng t? t?m ra y  button
                     local rippleTween = TweenService:Create(
                         ripple,
                         TweenInfo.new(0.35, Enum.EasingStyle.Quad, Enum.EasingDirection.Out),
@@ -1809,7 +1809,7 @@ function Library:CreateWindow(Setting)
                 ScrollContainerList.SortOrder = Enum.SortOrder.LayoutOrder
                 ScrollContainerList.Padding = UDim.new(0, 5)
                 
-                -- T?o internal section ?? ch?a c?c control
+                -- T?o internal section  ch?a c?c control
                 local InternalSection = Instance.new("Frame")
                 InternalSection.Name = "InternalSection"
                 InternalSection.Parent = ScrollContainer
@@ -2928,7 +2928,7 @@ function Library:CreateWindow(Setting)
 				-- TH?M ?O?N N?Y
                 function dropdownFunction:SetValue(value)
                     if not Selected then
-                        -- Dropdown ??n l? (single)
+                        -- Dropdown n l? (single)
                         if table.find(ListNew, value) then
                             Sel.Value = value
                             if Search then
@@ -3676,6 +3676,31 @@ task.spawn(function()
 	if not success then
 		warn("Fast Attack load failed:", err);
 	end;
+end);
+
+
+-- Permite player se mover normalmente: se teclas WASD/setas forem pressionadas, cancela tween ativo
+pcall(function()
+	local UIS = game:GetService("UserInputService");
+	local _movementKeys = {
+		Enum.KeyCode.W, Enum.KeyCode.A, Enum.KeyCode.S, Enum.KeyCode.D,
+		Enum.KeyCode.Up, Enum.KeyCode.Down, Enum.KeyCode.Left, Enum.KeyCode.Right,
+		Enum.KeyCode.Space
+	};
+	UIS.InputBegan:Connect(function(input, gpe)
+		if gpe then return; end; -- nao interfere com GUI
+		for _, key in ipairs(_movementKeys) do
+			if input.KeyCode == key then
+				-- Cancela tweens que estejam em modo automatico (farm) mas NAO os de combate
+				-- Apenas cancela se nao estiver farmando ativamente
+				if not _G.EclipseStartFarm and not _G.SailBoats and not _G.EclipseAutoTyrant then
+					shouldTween = false;
+					_G.StopTween = false; -- nao para o farm, so cancela o tween atual
+				end;
+				break;
+			end;
+		end;
+	end);
 end);
 
 local Window = Library:CreateWindow({
@@ -5902,6 +5927,7 @@ local function IsRaidMob(mob)
 	return false;
 end;
 BringEnemy = function()
+	-- So funciona se Bring Mob estiver ativo nas Settings E a flag _B estiver ligada
 	if not _G.Settings.Setting["Bring Mob"] or not _B then return end;
 	local plr = game.Players.LocalPlayer;
 	local char = plr.Character;
@@ -5910,34 +5936,39 @@ BringEnemy = function()
 	pcall(function()
 		sethiddenproperty(plr, "SimulationRadius", math.huge);
 	end);
-	local rawPos = PosMon or hrp.Position;
-	local targetPos = typeof(rawPos) == "CFrame" and rawPos.Position or rawPos;
+	-- Posicao alvo: diretamente embaixo do player (mesmo X/Z, Y do chao)
+	local playerPos = hrp.Position;
+	local targetPos = Vector3.new(playerPos.X, playerPos.Y, playerPos.Z);
 	local enemies = workspace.Enemies:GetChildren();
 	local count = 0;
 	for _, mob in ipairs(enemies) do
-		if count >= _G.MaxBringMobs then break end;
-		local hum = mob:FindFirstChild("Humanoid");
+		if count >= (_G.MaxBringMobs or 10) then break end;
+		local hum  = mob:FindFirstChild("Humanoid");
 		local root = mob:FindFirstChild("HumanoidRootPart");
 		if hum and root and hum.Health > 0 and not IsRaidMob(mob) then
-			local dist = (root.Position - targetPos).Magnitude;
-			if dist <= _G.BringRange and not root:GetAttribute("Tweening") then
+			local dist = (root.Position - playerPos).Magnitude;
+			if dist <= (_G.BringRange or 500) then
 				count = count + 1;
-				root:SetAttribute("Tweening", true);
-				-- Teleporte direto: mais confiavel que tween para garantir ataque
-				root.CFrame = CFrame.new(targetPos);
-				root:SetAttribute("Tweening", false);
-				-- Ataca o mob imediatamente apos trazer
 				pcall(function()
-					local head = mob:FindFirstChild("Head") or root;
-					if head and hum.Health > 0 then
-						local otherMobs = {};
-						for _, m2 in ipairs(enemies) do
-							if m2 ~= mob and m2:FindFirstChild("HumanoidRootPart") then
-								table.insert(otherMobs, {[1] = m2, [2] = m2:FindFirstChild("HumanoidRootPart")});
-							end;
+					-- Paralisa o mob e posiciona direto sob o player
+					hum.WalkSpeed = 0;
+					hum.JumpPower = 0;
+					-- Posiciona exatamente sob o player (Y=player, pequeno offset X para nao sobrepor)
+					root.CFrame = CFrame.new(
+						playerPos.X + (count-1)*1.5,
+						playerPos.Y,
+						playerPos.Z
+					);
+					-- Ancora para nao andar
+					root.Anchored = true;
+					-- Desancora apos um frame (servidor processa dano mas mob nao se move)
+					task.delay(0.05, function()
+						if root and root.Parent then
+							root.Anchored = false;
+							hum.WalkSpeed = 0; -- mantem parado
+							hum.JumpPower = 0;
 						end;
-						AttackModule:AttackEnemy(head, otherMobs);
-					end;
+					end);
 				end);
 			end;
 		end;
@@ -6601,37 +6632,53 @@ spawn(function()
 			pcall(function()
 				CheckQuest();
 				local plr = game:GetService("Players").LocalPlayer;
-				-- SUBMERGED ISLAND: nivel 2600+ - detecta automaticamente e usa Submarine Worker
-				local playerLevel = pcall(function() return plr.Data.Level.Value; end) and plr.Data.Level.Value or 0;
-				local isSubmergedQuest = LevelQuest and NameQuest and string.find(tostring(NameQuest), "Submerged");
-				if isSubmergedQuest or playerLevel >= 2600 then
+				-- ================================================================
+				-- SUBMERGED ISLAND (nivel 2600+):
+				-- 1) Se fora da ilha => vai Tiki Outpost, fala Submarine Worker, entra
+				-- 2) Se dentro (Y < -200) => farm normal (quest + mobs)
+				-- ================================================================
+				local _playerLevel = 0;
+				pcall(function() _playerLevel = plr.Data.Level.Value; end);
+				local _isSubQuest = LevelQuest and NameQuest and string.find(tostring(NameQuest or ""), "Submerged");
+				if _isSubQuest or _playerLevel >= 2600 then
 					local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
-					-- So age se estiver FORA da ilha submersa (Y > -500) e sem cooldown ativo
-					if hrp and hrp.Position.Y > -500 and not _G._subEntering then
+					if not hrp then return; end;
+					-- Se ainda esta FORA da ilha submersa, precisa entrar primeiro
+					if hrp.Position.Y > -200 then
+						-- Evita multiplas entradas simultaneas
+						if _G._subEntering then return; end;
 						_G._subEntering = true;
-						-- Posicao exata do Submarine Worker na Tiki Outpost (Mar 3)
-						local SubWorkerCF = CFrame.new(10878, 22, 10145);
+						-- PASSO 1: Vai direto para a Tiki Outpost via Tween
+						-- Submarine Worker fica na posicao -16417.6, 74.26, 1811.3 na Tiki
+						local SubWorkerCF = CFrame.new(-16417.6, 74.26, 1811.3);
 						TweenPlayer(SubWorkerCF);
 						local t = 0;
-						repeat task.wait(0.2); t = t + 0.2;
-						until (hrp.Position - SubWorkerCF.Position).Magnitude < 20 or t > 18;
-						task.wait(0.8);
-						-- Faz o dialogo com o NPC (funcao oficial do jogo)
+						repeat
+							task.wait(0.2); t = t + 0.2;
+							hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+							if not hrp then _G._subEntering = false; return; end;
+						until (hrp.Position - SubWorkerCF.Position).Magnitude < 15 or t > 25;
+						task.wait(0.5);
+						-- PASSO 2: Dialogo com Submarine Worker
+						pcall(function()
+							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
+						end);
+						task.wait(0.5);
+						-- PASSO 3: Funcao oficial de viagem para a Submerged Island
 						pcall(function()
 							game:GetService("ReplicatedStorage").Modules.Net["RF/SubmarineWorkerSpeak"]:InvokeServer("TravelToSubmergedIsland");
 						end);
-						-- Aguarda teleporte para Y < -500 (ilha submersa)
+						-- PASSO 4: Aguarda teleporte (player vai para Y < -200)
 						t = 0;
-						repeat task.wait(0.3); t = t + 0.3;
-						until hrp.Position.Y < -500 or t > 20;
-						task.wait(1.5);
+						repeat
+							task.wait(0.3); t = t + 0.3;
+							hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+						until (hrp and hrp.Position.Y < -200) or t > 20;
+						task.wait(1);
 						_G._subEntering = false;
-						if hrp.Position.Y > -500 then
-							-- Tentativa falhou, reinicia cooldown menor
-							task.delay(5, function() _G._subEntering = false; end);
-							return;
-						end;
+						return; -- Nao faz farm nesta iteracao, aguarda proxima
 					end;
+					-- Chegou aqui = esta dentro da ilha (Y < -200), farm normal abaixo
 				end;
 				-- Abandona quest errada
 				local ok, QuestTitle = pcall(function()
@@ -6981,16 +7028,19 @@ task.spawn(function()
 				if not plrHum or not plrHRP then return; end;
 				local bossHRP = boss:FindFirstChild("HumanoidRootPart");
 				if not bossHRP then return; end;
-				-- Recuo emergencial: HP baixo
-				if plrHum.Health <= 2000 then
-					local retreatCF = CFrame.new(bossHRP.Position + Vector3.new(60, 15, 60));
-					plrHRP.CFrame = retreatCF;
-					task.wait(0.5);
+				-- Recuo: HP <= 4000 => sobe 1200 unidades, aguarda 10000 HP para voltar
+				if plrHum.Health <= 4000 then
+					local highPos = bossHRP.Position + Vector3.new(0, 1200, 0);
+					plrHRP.Anchored = true;
+					plrHRP.CFrame = CFrame.new(highPos);
 					local t = 0;
-					repeat task.wait(0.5); t = t + 0.5;
+					repeat
+						task.wait(0.5); t = t + 0.5;
 						plrChar = plr.Character;
 						plrHum  = plrChar and plrChar:FindFirstChildOfClass("Humanoid");
-					until (not _G.EclipseAutoTyrant) or (plrHum and plrHum.Health >= 5500) or t > 12;
+						if plrHRP and plrHRP.Parent then plrHRP.CFrame = CFrame.new(highPos); end;
+					until (not _G.EclipseAutoTyrant) or (plrHum and plrHum.Health >= 10000) or t > 40;
+					if plrHRP and plrHRP.Parent then plrHRP.Anchored = false; end;
 					return;
 				end;
 				-- Dodge continuo: alterna posicoes ao redor do boss
@@ -7021,18 +7071,17 @@ task.spawn(function()
 					task.wait(0.05);
 					if (plrHRP.Position - pos.Position).Magnitude < 15 then
 						plrHRP.Anchored = true;
-						if HasSkullGuitar() then
-							TyrantEquipSkullGuitar();
-							local VU = game:GetService("VirtualUser");
-							for i = 1, 12 do
-								VU:CaptureController();
-								VU:Button1Down(Vector2.new(851,400));
+						-- Spam de skills aleatorias Z X C V F (NAO usa Soul Guitar / M1)
+						local VIM2 = game:GetService("VirtualInputManager");
+						local _vSkills = {"Z","X","C","V","F"};
+						for _si = 1, 10 do
+							local sk = _vSkills[math.random(1,#_vSkills)];
+							pcall(function()
+								VIM2:SendKeyEvent(true,  sk, false, game);
 								task.wait(0.04);
-								VU:Button1Up(Vector2.new(851,400));
-								task.wait(0.04);
-							end;
-						else
-							TyrantUseSkills();
+								VIM2:SendKeyEvent(false, sk, false, game);
+							end);
+							task.wait(0.06);
 						end;
 						task.wait(0.1);
 						plrHRP.Anchored = false;
@@ -8163,6 +8212,78 @@ spawn(function()
 	end;
 end);
 -- [Auto Elite Hunter + Hop foram movidos para a aba Farming And Hop para evitar duplicacao]
+-- FACTORY RAID (Sea 2 - Dom Flamingo's Factory)
+FactoryRaidSection = OthersTab:AddSection("Factory Raid");
+_G.Settings.Farm["Auto Factory Raid"] = _G.Settings.Farm["Auto Factory Raid"] or false;
+AutoFactoryRaidToggle = OthersTab:AddToggle({
+	Title = "Auto Factory Raid",
+	Desc = "Entra na factory pelo portal do Dom Flamingo (Sea 2), vai ao topo e farma os inimigos.",
+	Value = _G.Settings.Farm["Auto Factory Raid"],
+	Callback = function(state)
+		_G.Settings.Farm["Auto Factory Raid"] = state;
+		(getgenv()).SaveSetting();
+	end
+});
+
+-- Posicoes da Factory
+local _FACTORY_PORTAL_POS = Vector3.new(1073.47, 14.52, 1560.72); -- Portal Dom Flamingo Sea 2
+local _FACTORY_TOP_CF     = CFrame.new(1002.53, 500, 1522.34);    -- Topo da factory
+local _FACTORY_MOB_CF     = CFrame.new(1002.53, 490, 1520.0);      -- Area de farm no topo
+
+spawn(function()
+	while wait(0.5) do
+		if not _G.Settings.Farm["Auto Factory Raid"] then continue; end;
+		pcall(function()
+			local plr = game.Players.LocalPlayer;
+			local char = plr.Character;
+			if not char then return; end;
+			local hrp = char:FindFirstChild("HumanoidRootPart");
+			local hum = char:FindFirstChildOfClass("Humanoid");
+			if not hrp or not hum then return; end;
+			-- Verifica se ja esta dentro da factory (Y > 300)
+			local insideFactory = hrp.Position.Y > 300;
+			if not insideFactory then
+				-- Entra na factory pelo portal do Dom Flamingo
+				pcall(function()
+					(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
+						"requestEntrance", _FACTORY_PORTAL_POS
+					);
+				end);
+				task.wait(2);
+				-- Tween ate o topo
+				TweenPlayer(_FACTORY_TOP_CF);
+				local t = 0;
+				repeat task.wait(0.2); t=t+0.2;
+				until hrp.Position.Y > 400 or t > 15;
+				return;
+			end;
+			-- Farma inimigos no topo da factory
+			local foundEnemy = false;
+			for _, mob in pairs(workspace.Enemies:GetChildren()) do
+				local mobHRP = mob:FindFirstChild("HumanoidRootPart");
+				local mobHum = mob:FindFirstChild("Humanoid");
+				if mobHRP and mobHum and mobHum.Health > 0 then
+					if mobHRP.Position.Y > 300 then
+						-- Mob no topo da factory
+						foundEnemy = true;
+						EquipWeapon(_G.Settings.Main["Selected Weapon"]);
+						AutoHaki();
+						TweenPlayer(mobHRP.CFrame * Pos);
+						mobHum.WalkSpeed = 0;
+						Attack();
+						break;
+					end;
+				end;
+			end;
+			if not foundEnemy then
+				-- Nenhum inimigo encontrado no topo, vai para posicao de farm
+				TweenPlayer(_FACTORY_MOB_CF);
+				task.wait(1);
+			end;
+		end);
+	end;
+end);
+
 PirateRaidSection = OthersTab:AddSection("Pirate Raid");
 AutoPirateRaidToggle = OthersTab:AddToggle({
 	Title = "Auto Pirate Raid",
@@ -8584,27 +8705,24 @@ task.spawn(function()
 					game:GetService("StarterGui"):SetCore("SendNotification",{Title="TRon Void Hub",Text="Item especial encontrado!",Duration=6});
 					break;
 				end;
-				-- Teleporta diretamente sobre o bau (preciso)
+				-- Vai ate o bau via TweenPlayer
 				local targetCF = v.RootPart.CFrame;
 				local beliBefore = _chestTweenLastBeli;
-				hrp.CFrame = targetCF;
-				-- Aguarda confirmacao de coleta (beli subiu) ou timeout curto
-				local timeout = 0;
+				TweenPlayer(targetCF);
+				-- Aguarda chegar ao bau
+				local tw = 0;
 				repeat
-					task.wait(0.05);
-					timeout = timeout + 0.05;
-				until not _chestTweenActive or not v.Parent or _chestTweenLastBeli > beliBefore or timeout >= 1.5;
-				-- Se nao coletou (beli nao subiu), tenta tween suave pro bau
-				if v.Parent and _chestTweenLastBeli <= beliBefore and timeout >= 1.5 then
-					local TweenSvc = game:GetService("TweenService");
-					local dist2 = (hrp.Position - targetCF.Position).Magnitude;
-					local tw = TweenSvc:Create(hrp, TweenInfo.new(math.max(0.1, dist2/600), Enum.EasingStyle.Linear), {CFrame = targetCF});
-					tw:Play();
-					local t2 = 0;
-					while tw.PlaybackState == Enum.PlaybackState.Playing and t2 < 1 do
-						task.wait(0.05); t2 = t2 + 0.05;
-						if _chestTweenLastBeli > beliBefore or not v.Parent then tw:Cancel(); break; end;
-					end;
+					task.wait(0.1); tw = tw + 0.1;
+					hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+					if not hrp then break; end;
+				until not _chestTweenActive or not v.Parent
+					or _chestTweenLastBeli > beliBefore
+					or (hrp and (hrp.Position - targetCF.Position).Magnitude < 5)
+					or tw > 8;
+				-- Se beli nao subiu ainda, teleporta direto para coletar
+				if v.Parent and _chestTweenLastBeli <= beliBefore then
+					if hrp then hrp.CFrame = targetCF; end;
+					task.wait(0.3);
 				end;
 				_G.ChestHopCount = _G.ChestHopCount + 1;
 			end;
@@ -8666,19 +8784,26 @@ task.spawn(function()
 				end;
 				local chestCF = v.RootPart.CFrame;
 				local beliBefore = _chestTweenLastBeli;
-				-- Teleporte exato no bau
+				-- Bypass: teleporta direto no bau
 				hrp.CFrame = chestCF;
 				task.wait(0.03);
-				-- Confirma coleta: aguarda beli subir ou timeout
+				-- Spam de dash para garantir coleta
+				local _VIM = game:GetService("VirtualInputManager");
+				for _di = 1, 5 do
+					pcall(function()
+						_VIM:SendKeyEvent(true,  "Q", false, game);
+						task.wait(0.02);
+						_VIM:SendKeyEvent(false, "Q", false, game);
+					end);
+					task.wait(0.03);
+				end;
+				-- Aguarda confirmacao de coleta
 				local timeout = 0;
 				repeat
-					task.wait(0.04);
-					timeout = timeout + 0.04;
+					task.wait(0.04); timeout = timeout + 0.04;
 				until not _chestBypassActive or not v.Parent or _chestTweenLastBeli > beliBefore or timeout >= 1;
-				-- Se ainda nao coletou, faz jump para triggar o pickup
+				-- Se ainda nao coletou, teleporta de novo
 				if v.Parent and _chestTweenLastBeli <= beliBefore then
-					hrp.CFrame = chestCF * CFrame.new(0, 1.5, 0);
-					task.wait(0.04);
 					hrp.CFrame = chestCF;
 					task.wait(0.1);
 				end;
@@ -9432,6 +9557,53 @@ FastAttackMethodDropdown = SettingsTab:AddDropdown({
 		_G.Settings.Setting["Fast Attack Mode"] = option;
 	end
 });
+
+-- Fast Attack V1 e V2 (Koby)
+SettingsTab:AddSection("Fast Attack Modes");
+SettingsTab:AddToggle({
+	Title = "Auto Fast Attack V1",
+	Desc = "Fast Attack normal. Velocidade controlada pelo dropdown acima.",
+	Value = _G.Settings.Setting["Fast Attack"] or false,
+	Callback = function(state)
+		_G.Settings.Setting["Fast Attack"] = state;
+		_G.Settings.Setting["Fast Attack V1"] = state;
+		-- Desliga V2 ao ligar V1
+		if state then _G.Settings.Setting["Fast Attack V2"] = false; end;
+		(getgenv()).SaveSetting();
+	end
+});
+SettingsTab:AddToggle({
+	Title = "Auto Fast Attack V2 (Koby)",
+	Desc = "Fast Attack via VirtualInputManager sem delay de animacao (metodo Koby).",
+	Value = _G.Settings.Setting["Fast Attack V2"] or false,
+	Callback = function(state)
+		_G.Settings.Setting["Fast Attack V2"] = state;
+		-- Desliga V1 ao ligar V2
+		if state then _G.Settings.Setting["Fast Attack"] = false; end;
+		(getgenv()).SaveSetting();
+	end
+});
+-- Loop V2 (Koby): clicks continuos via VirtualInputManager
+spawn(function()
+	local VIM = game:GetService("VirtualInputManager");
+	while true do
+		task.wait(0);
+		if _G.Settings.Setting["Fast Attack V2"] then
+			pcall(function()
+				local char = game.Players.LocalPlayer.Character;
+				if not char then return; end;
+				local hum = char:FindFirstChildOfClass("Humanoid");
+				if not hum or hum.Health <= 0 then return; end;
+				VIM:SendMouseButtonEvent(851, 400, 0, true,  game, 0);
+				task.wait(0.01);
+				VIM:SendMouseButtonEvent(851, 400, 0, false, game, 0);
+				task.wait(0.03);
+			end);
+		else
+			task.wait(0.05);
+		end;
+	end;
+end);
 spawn(function()
 	while wait() do
 		if _G.Settings.Setting["Fast Attack Mode"] == "Slow" then
@@ -11654,6 +11826,11 @@ spawn(function()
 		if _G.AutoBuyChip then
 			pcall(function()
 				if RaidGetBP("Special Microchip") then return; end;
+				-- Nao compra se RaidTimer estiver visivel (raid ativa ou contando)
+				local _, raidActive = pcall(function()
+					return game.Players.LocalPlayer.PlayerGui.Main.TopHUDList.RaidTimer.Visible;
+				end);
+				if raidActive then return; end;
 				local plr = game.Players.LocalPlayer;
 				for _, tool in ipairs(plr.Backpack:GetChildren()) do
 					if tool:IsA("Tool") and (tool.ToolTip == "Fruit" or tool:GetAttribute("Type") == "Fruit") then
@@ -12531,125 +12708,125 @@ BuyObservationHakiButton = ShopTab:AddButton({
 		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("KenTalk", "Buy");
 	end
 });
-ShopTab:AddSection(" Auto Buy Fight Styles");
+ShopTab:AddSection(" Buy Fight Styles - Tween to NPC");
 
+-- Funcao central para ir ate NPC e comprar estilo de luta
 local FightStyleNPCs = {
-	["Dark Step"]      = {npc="Dark Step Teacher",   pos=CFrame.new(979.7, 261.2, 1557.7),    buy="BuyDarkStep"},
-	["Electric"]       = {npc="Mad Scientist",        pos=CFrame.new(61050, 19, 1537),          buy="BuyElectro",   portal=Vector3.new(61163.8,11.7,1819.8)},
-	["Water Kung Fu"]  = {npc="Water Kung Fu Teacher",pos=CFrame.new(-16682, -170, -5780),      buy="BuyFishmanKarate", submerged=true},
-	["Dragon Breath"]  = {npc="Sabi",                 pos=CFrame.new(-429.54, 71.77, 1836.18),  buy="BuyDragonBreath"},
-	["Superhuman"]     = {npc="Martial Arts Master",  pos=CFrame.new(-5039.59, 27.35, 4324.68), buy="BuySuperhuman"},
-	["Sharkman Karate"]= {npc="Sharkman Teacher",     pos=CFrame.new(609.86, 400.12, -5372.26), buy="BuySharkmanKarate"},
-	["Death Step"]     = {npc="Phoeyu, the Reformed", pos=CFrame.new(-5497.06, 47.59, -795.24), buy="BuyDeathStep"},
-	["Electric Claw"]  = {npc="Previous Hero",        pos=CFrame.new(-6064.07, 15.24, -4902.98),buy="BuyElectricClaw"},
-	["Dragon Talon"]   = {npc="UzothDragon",          pos=CFrame.new(-290.07, 42.90, 5581.59),  buy="BuyDragonTalon"},
-	["Godhuman"]       = {npc="Ancient Monk",          pos=CFrame.new(-16546.748, 55.72, -172.87),buy="BuyGodhuman"},
-	["Sanguine Art"]   = {npc="Shafi",                pos=CFrame.new(-12318.19, 602, -6538.66), buy="BuySanguineArt"},
+	["Black Leg"]      = {npc="Black Leg Teacher",   pos=CFrame.new(-988, 13, 3996),           buy="BuyBlackLeg"},
+	["Electro"]        = {npc="Mad Scientist",        pos=CFrame.new(61050, 19, 1537),          buy="BuyElectro",   portal=Vector3.new(61163.8,11.7,1819.8)},
+	["Fishman Karate"] = {npc="Fishman Karate Teacher",pos=CFrame.new(61584.35, 18.85, 988.89), buy="BuyFishmanKarate"},
+	["Superhuman"]     = {npc="Martial Arts Master",  pos=CFrame.new(1378.05, 247.43, -5189.37),buy="BuySuperhuman"},
+	["Death Step"]     = {npc="Phoeyu, the Reformed", pos=CFrame.new(6360.04, 296.67, -6763.93),buy="BuyDeathStep"},
+	["Sharkman Karate"]= {npc="Sharkman Karate Teacher",pos=CFrame.new(-2602.40, 239.22, -10314.75),buy="BuySharkmanKarate"},
+	["Electric Claw"]  = {npc="Previous Hero",        pos=CFrame.new(-10369.83,331.69,-10126.49),buy="BuyElectricClaw"},
+	["Dragon Talon"]   = {npc="UzothDragon",          pos=CFrame.new(5662.03,1211.32,858.60),   buy="BuyDragonTalon"},
+	["God Human"]      = {npc="Ancient Monk",          pos=CFrame.new(-13775.56,334.66,-9877.67),buy="BuyGodhuman"},
+	["Sanguine Art"]   = {npc="Shafi",                pos=CFrame.new(-16514.86,23.18,-190.84),  buy="BuySanguineArt"},
+	["Water Kung Fu"]  = {npc="Water Kung Fu Teacher", pos=CFrame.new(-4960.04, 35.08, -4662.67),buy="BuyFishmanKarate", submerged=true},
 };
 
 local FightStyleOrder = {
-	"Dark Step", "Electric", "Water Kung Fu", "Dragon Breath", "Superhuman",
-	"Sharkman Karate", "Death Step", "Electric Claw", "Dragon Talon", "Godhuman", "Sanguine Art"
+	"Black Leg","Electro","Fishman Karate","Superhuman","Death Step",
+	"Sharkman Karate","Electric Claw","Dragon Talon","God Human","Sanguine Art","Water Kung Fu"
 };
 
 local SelectedFightStyle = FightStyleOrder[1];
 ShopTab:AddDropdown({
-	Title = "Select Fight Style to Buy",
-	Desc = "Seleciona o estilo de luta para comprar indo ate o NPC",
+	Title = "Select Fight Style",
 	Values = FightStyleOrder,
 	Value = FightStyleOrder[1],
 	Callback = function(v) SelectedFightStyle = v; end
 });
 
-ShopTab:AddButton({
-	Title = " Go Buy Fight Style (Tween to NPC)",
-	Desc = "Tween ate o NPC e compra o estilo selecionado",
-	Callback = function()
-		task.spawn(function()
-			pcall(function()
-				local data = FightStyleNPCs[SelectedFightStyle];
-				if not data then return; end;
-				local hrp = game.Players.LocalPlayer.Character and
-						game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-				if not hrp then return; end;
-				-- Entra pelo portal se necessario
-				if data.portal then
-					(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", data.portal);
-					task.wait(2);
-				end;
-				-- Entra na ilha submersa se necessario (Water Kung Fu)
-				if data.submerged then
-					local subWorkerCF = CFrame.new(10878, 22, 10145);
-					TweenPlayer(subWorkerCF);
-					local t2 = 0;
-					repeat task.wait(0.2); t2=t2+0.2;
-					until (hrp.Position - subWorkerCF.Position).Magnitude < 20 or t2 > 15;
-					task.wait(0.5);
-					game:GetService("ReplicatedStorage").Modules.Net["RF/SubmarineWorkerSpeak"]:InvokeServer("TravelToSubmergedIsland");
-					local t3 = 0;
-					repeat task.wait(0.3); t3=t3+0.3;
-					until hrp.Position.Y < -100 or t3 > 15;
-					task.wait(1);
-				end;
-				-- Vai ate o NPC
-				TweenPlayer(data.pos);
-				local t = 0;
-				repeat task.wait(0.2); t=t+0.2;
-				until (hrp.Position - data.pos.Position).Magnitude < 20 or t > 15;
-				task.wait(0.5);
-				-- Interage com o NPC
-				(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("NPC", data.npc);
-				task.wait(0.5);
-				-- Compra o estilo
-				(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy);
-				task.wait(0.5);
-				(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy, true);
-			end);
+-- Funcao que faz o processo completo: tween > dialogo NPC > compra
+local function BuyFightStyleFull(styleName)
+	local data = FightStyleNPCs[styleName];
+	if not data then
+		game:GetService("StarterGui"):SetCore("SendNotification",{Title="TRon Void Hub",Text="Estilo nao encontrado: " .. tostring(styleName),Duration=4});
+		return;
+	end;
+	local plr = game.Players.LocalPlayer;
+	local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+	if not hrp then return; end;
+	-- Portal (ex: Under Water Island para Electro)
+	if data.portal then
+		pcall(function()
+			(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", data.portal);
 		end);
+		task.wait(2);
+		hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+		if not hrp then return; end;
+	end;
+	-- Ilha submersa (Water Kung Fu)
+	if data.submerged then
+		local SubWorkerCF = CFrame.new(-16417.6, 74.26, 1811.3);
+		TweenPlayer(SubWorkerCF);
+		local tw = 0;
+		repeat task.wait(0.2); tw=tw+0.2; until (hrp.Position - SubWorkerCF.Position).Magnitude < 18 or tw > 15;
+		task.wait(0.5);
+		pcall(function()
+			(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
+		end);
+		task.wait(0.5);
+		pcall(function()
+			game:GetService("ReplicatedStorage").Modules.Net["RF/SubmarineWorkerSpeak"]:InvokeServer("TravelToSubmergedIsland");
+		end);
+		tw = 0;
+		repeat task.wait(0.3); tw=tw+0.3; until hrp.Position.Y < -200 or tw > 18;
+		task.wait(1);
+		hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+		if not hrp then return; end;
+	end;
+	-- Tween ate o NPC
+	TweenPlayer(data.pos);
+	local t = 0;
+	repeat task.wait(0.2); t=t+0.2; until (hrp.Position - data.pos.Position).Magnitude < 15 or t > 20;
+	task.wait(0.5);
+	-- Dialogo com o NPC
+	pcall(function()
+		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("NPC", data.npc);
+	end);
+	task.wait(0.6);
+	-- Compra o estilo (duas chamadas: sem e com true, para garantir)
+	pcall(function()
+		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy);
+	end);
+	task.wait(0.3);
+	pcall(function()
+		(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy, true);
+	end);
+	game:GetService("StarterGui"):SetCore("SendNotification",{
+		Title="TRon Void Hub", Text="Compra enviada: " .. styleName, Duration=4
+	});
+end;
+
+ShopTab:AddButton({
+	Title = " Go Buy Selected Fight Style",
+	Desc = "Tween ate o NPC, faz dialogo e compra o estilo selecionado",
+	Callback = function()
+		task.spawn(function() pcall(BuyFightStyleFull, SelectedFightStyle); end);
 	end
 });
 
+local _autoBuyAllActive = false;
 ShopTab:AddToggle({
 	Title = "Auto Buy All Fight Styles",
-	Desc = "Vai em cada NPC e compra todos os estilos de luta em ordem",
+	Desc = "Vai em cada NPC em ordem e compra todos os estilos",
 	Value = false,
 	Callback = function(state)
+		_autoBuyAllActive = state;
 		if state then
 			task.spawn(function()
 				for _, styleName in ipairs(FightStyleOrder) do
-					if not state then break; end;
-					local data = FightStyleNPCs[styleName];
-					if not data then continue; end;
-					pcall(function()
-						if data.portal then
-							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", data.portal);
-							task.wait(1);
-						end;
-						if data.submerged then
-							local _SUBMARINE_WORKER_CF = CFrame.new(-16417.6, 74.26, 1811.3);
-							TweenPlayer(_SUBMARINE_WORKER_CF);
-							local hrp = game.Players.LocalPlayer.Character and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-							local timeout = 0;
-							repeat task.wait(0.1); timeout = timeout + 0.1; until not hrp or (hrp.Position - _SUBMARINE_WORKER_CF.Position).Magnitude < 15 or timeout > 8;
-							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("NPC", "Submarine Worker");
-							task.wait(0.8);
-							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", Vector3.new(-16490.18, 55.77, 1768.44));
-							task.wait(1.5);
-						end;
-						TweenPlayer(data.pos);
-						task.wait(2);
-						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy);
-						task.wait(0.5);
-						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(data.buy, true);
-						task.wait(1);
-					end);
+					if not _autoBuyAllActive then break; end;
+					pcall(BuyFightStyleFull, styleName);
+					task.wait(1.5);
 				end;
+				_autoBuyAllActive = false;
 			end);
 		end;
 	end
 });
-
--- Instant-buy fighting style section removida (use "Go Buy Fight Style" acima)
 SwordShopSection = ShopTab:AddSection("Sword");
 BuyCutlassButton = ShopTab:AddButton({
 	Title = "Buy Cutlass",
@@ -12885,71 +13062,97 @@ SelectedTeleportIslandDropdown = TeleportTab:AddDropdown({
 });
 
 -- Teleport To Island (CFrame instantaneo)
+-- Tween To Island: vai suavemente ate a ilha e PARA quando chega (nao fica em loop)
 AutoTeleportToIslandToggle = TeleportTab:AddToggle({
-	Title = "Teleport To Island",
-	Desc = "Teleporte instantaneo para a ilha selecionada",
+	Title = "Tween To Island",
+	Desc = "Move suavemente ate a ilha selecionada e para ao chegar. Player pode se mover normalmente.",
 	Value = false,
 	Callback = function(state)
-		_G.TeleportIsland = state;
-		if not state then StopTween(false); end;
-		if state then
-			task.spawn(function()
-				repeat
-					pcall(function()
-						if not _G.SelectIsland then return; end;
-						local hrp = game.Players.LocalPlayer.Character
-							and game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart");
-						if not hrp then return; end;
-						if PortalIslands[_G.SelectIsland] then
-							(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
-								"requestEntrance", PortalIslands[_G.SelectIsland]
-							);
-							task.wait(0.8);
-						else
-							local target = workspace._WorldOrigin.Locations:FindFirstChild(_G.SelectIsland);
-							if target then
-								hrp.CFrame = target.CFrame * CFrame.new(0, 5, 0);
-							end;
-						end;
-					end);
-					task.wait(0.5);
-				until not _G.TeleportIsland;
-			end);
-		end;
+		_G.TweenToIslandActive = state;
+		if not state then StopTween(false); return; end;
+		task.spawn(function()
+			if not _G.SelectIsland or _G.SelectIsland == "" then return; end;
+			local plr = game.Players.LocalPlayer;
+			local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+			if not hrp then return; end;
+			if PortalIslands and PortalIslands[_G.SelectIsland] then
+				pcall(function()
+					(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
+						"requestEntrance", PortalIslands[_G.SelectIsland]
+					);
+				end);
+				task.wait(1.5);
+			else
+				local target = workspace._WorldOrigin.Locations:FindFirstChild(_G.SelectIsland);
+				if target then
+					local destCF = target.CFrame * CFrame.new(0, 5, 0);
+					-- Usa TweenPlayer para movimento suave
+					TweenPlayer(destCF);
+					-- Aguarda chegar ou ser cancelado pelo player
+					local t = 0;
+					repeat
+						task.wait(0.1); t = t + 0.1;
+						hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+						if not hrp then break; end;
+					until not _G.TweenToIslandActive
+						or (hrp.Position - destCF.p).Magnitude < 20
+						or t > 60;
+					-- Para automaticamente ao chegar
+					StopTween(false);
+					_G.TweenToIslandActive = false;
+					if AutoTeleportToIslandToggle then
+						pcall(function() AutoTeleportToIslandToggle:SetValue(false); end);
+					end;
+				end;
+			end;
+		end);
 	end
 });
 
--- BYPASS TELEPORT (teleporte instantaneo que nao para o tween)
+-- BYPASS TELEPORT: teleporta + reseta ate chegar na ilha
 _G.BypassTeleportActive = false;
-local _bypassLoopConn = nil;
 TeleportTab:AddToggle({
-	Title = "Bypass Teleport",
-	Desc = "Teleporte instantaneo para o NPC/ilha selecionada (nao para farms)",
+	Title = "Bypass Teleport to Island",
+	Desc = "Teleporta via bypass (com reset) para a ilha selecionada. Repete ate chegar. Player pode pular/mover.",
 	Value = false,
 	Callback = function(state)
 		_G.BypassTeleportActive = state;
-		if state then
-			_bypassLoopConn = task.spawn(function()
-				while _G.BypassTeleportActive do
-					pcall(function()
-						local plr = game.Players.LocalPlayer;
-						local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
-						if not hrp then return; end;
-						if _G.SelectIsland and _G.SelectIsland ~= "" then
-							if PortalIslands and PortalIslands[_G.SelectIsland] then
-								(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer("requestEntrance", PortalIslands[_G.SelectIsland]);
-							else
-								local target = workspace._WorldOrigin.Locations:FindFirstChild(_G.SelectIsland);
-								if target then hrp.CFrame = target.CFrame * CFrame.new(0,5,0); end;
+		if not state then return; end;
+		task.spawn(function()
+			while _G.BypassTeleportActive do
+				pcall(function()
+					if not _G.SelectIsland or _G.SelectIsland == "" then return; end;
+					local plr = game.Players.LocalPlayer;
+					local hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+					if not hrp then return; end;
+					if PortalIslands and PortalIslands[_G.SelectIsland] then
+						-- Portal: requestEntrance
+						(game:GetService("ReplicatedStorage")).Remotes.CommF_:InvokeServer(
+							"requestEntrance", PortalIslands[_G.SelectIsland]
+						);
+						task.wait(1.5);
+					else
+						local target = workspace._WorldOrigin.Locations:FindFirstChild(_G.SelectIsland);
+						if target then
+							local destCF = target.CFrame * CFrame.new(0, 5, 0);
+							-- Bypass: teleporte direto no HRP
+							hrp.CFrame = destCF;
+							task.wait(0.3);
+							-- Verifica se chegou
+							hrp = plr.Character and plr.Character:FindFirstChild("HumanoidRootPart");
+							if hrp and (hrp.Position - destCF.p).Magnitude < 20 then
+								-- Chegou! Para o loop
+								_G.BypassTeleportActive = false;
+								game:GetService("StarterGui"):SetCore("SendNotification",{
+									Title="TRon Void Hub", Text="Chegou em: " .. _G.SelectIsland, Duration=4
+								});
 							end;
 						end;
-					end);
-					task.wait(0.5);
-				end;
-			end);
-		else
-			_G.BypassTeleportActive = false;
-		end;
+					end;
+				end);
+				task.wait(0.5);
+			end;
+		end);
 	end
 });
 
@@ -13923,22 +14126,38 @@ task.spawn(function()
 				local owner = boat and (boat:FindFirstChild("OwnerName") or boat:FindFirstChild("Owner"));
 				if owner and owner.Value ~= plrName then boat = nil; end;
 			end;
-			-- Compra barco se nao tiver (proprio)
+			-- Sem barco: tween ate vendedor, compra, aguarda spawn
 			if not boat then
 				TweenPlayer(_BOAT_DEALER_CF);
-				task.wait(2);
-				if (hrp.Position - _BOAT_DEALER_CF.Position).Magnitude < 30 then
-					game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat", selectedBoat);
-					task.wait(1.5);
-				end;
-				return;
+				local tw = 0;
+				repeat task.wait(0.2); tw=tw+0.2;
+				until (hrp.Position - _BOAT_DEALER_CF.Position).Magnitude < 25 or tw > 15;
+				task.wait(0.3);
+				game:GetService("ReplicatedStorage").Remotes.CommF_:InvokeServer("BuyBoat", selectedBoat);
+				-- Aguarda barco spawnar com owner do player (ate 8s)
+				local sw = 0;
+				repeat
+					task.wait(0.3); sw = sw + 0.3;
+					boat = nil;
+					for _, b in pairs(workspace.Boats:GetChildren()) do
+						if b.Name == selectedBoat then
+							local own = b:FindFirstChild("OwnerName") or b:FindFirstChild("Owner");
+							if own and own.Value == plrName then boat = b; break; end;
+						end;
+					end;
+				until boat or sw > 8;
+				if not boat then return; end; -- nao conseguiu spawnar
 			end;
-			-- Senta no barco se nao estiver sentado
+			-- Barco existe: monta nele se ainda nao estiver sentado
 			if not hum.Sit then
 				local seat = boat:FindFirstChildWhichIsA("VehicleSeat");
 				if seat then
-					hrp.CFrame = seat.CFrame * CFrame.new(0,1.5,0);
+					hrp.CFrame = seat.CFrame * CFrame.new(0, 1.5, 0);
 					task.wait(0.5);
+					if not hum.Sit then -- tenta de novo mais perto
+						hrp.CFrame = seat.CFrame * CFrame.new(0, 0.3, 0);
+						task.wait(0.5);
+					end;
 				end;
 				return;
 			end;
