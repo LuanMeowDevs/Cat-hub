@@ -11,37 +11,37 @@ getgenv().Nousigi = true
 
 local DisableAnimation = game.Players.LocalPlayer.PlayerGui:FindFirstChild('TouchGui')
 local T1UIColor = {
-	["Border Color"] = Color3.fromRGB(90, 0, 160),
+	["Border Color"] = Color3.fromRGB(60, 0, 100),          -- roxo escuro
 	["Click Effect Color"] = Color3.fromRGB(200, 200, 200),
 	["Setting Icon Color"] = Color3.fromRGB(200, 200, 200),
 	["Logo Image"] = "rbxassetid://133779423735605",
 	["Search Icon Color"] = Color3.fromRGB(200, 200, 200),
-	["Search Icon Highlight Color"] = Color3.fromRGB(90, 0, 160),
+	["Search Icon Highlight Color"] = Color3.fromRGB(60, 0, 100),
 	["GUI Text Color"] = Color3.fromRGB(220, 220, 220),
 	["Text Color"] = Color3.fromRGB(220, 220, 220),
-	["Placeholder Text Color"] = Color3.fromRGB(130, 130, 130),
-	["Title Text Color"] = Color3.fromRGB(210, 160, 255),
-	["Background Main Color"] = Color3.fromRGB(0, 0, 0),
-	["Background 1 Color"] = Color3.fromRGB(0, 0, 0),
-	["Background 1 Transparency"] = 0.1,
+	["Placeholder Text Color"] = Color3.fromRGB(110, 110, 110),
+	["Title Text Color"] = Color3.fromRGB(190, 130, 255),
+	["Background Main Color"] = Color3.fromRGB(0, 0, 0),    -- full black
+	["Background 1 Color"] = Color3.fromRGB(0, 0, 0),       -- full black
+	["Background 1 Transparency"] = 0,                       -- sem transparencia
 	["Background 2 Color"] = Color3.fromRGB(0, 0, 0),
 	["Background 3 Color"] = Color3.fromRGB(0, 0, 0),
 	["Background Image"] = "",
-	["Page Selected Color"] = Color3.fromRGB(110, 20, 180),
+	["Page Selected Color"] = Color3.fromRGB(70, 0, 120),   -- roxo escuro selecionado
 	["Section Text Color"] = Color3.fromRGB(200, 200, 200),
-	["Section Underline Color"] = Color3.fromRGB(90, 0, 160),
-	["Toggle Border Color"] = Color3.fromRGB(90, 0, 160),
-	["Toggle Checked Color"] = Color3.fromRGB(200, 200, 200),
-	["Toggle Desc Color"] = Color3.fromRGB(160, 160, 160),
-	["Button Color"] = Color3.fromRGB(90, 0, 160),
+	["Section Underline Color"] = Color3.fromRGB(60, 0, 100),
+	["Toggle Border Color"] = Color3.fromRGB(60, 0, 100),
+	["Toggle Checked Color"] = Color3.fromRGB(180, 100, 255),
+	["Toggle Desc Color"] = Color3.fromRGB(150, 150, 150),
+	["Button Color"] = Color3.fromRGB(60, 0, 100),          -- roxo escuro
 	["Label Color"] = Color3.fromRGB(0, 0, 0),
 	["Dropdown Icon Color"] = Color3.fromRGB(200, 200, 200),
-	["Dropdown Selected Color"] = Color3.fromRGB(110, 20, 180),
-	["Dropdown Selected Check Color"] = Color3.fromRGB(60, 0, 110),
-	["Textbox Highlight Color"] = Color3.fromRGB(90, 0, 160),
-	["Box Highlight Color"] = Color3.fromRGB(90, 0, 160),
-	["Slider Line Color"] = Color3.fromRGB(90, 0, 160),
-	["Slider Highlight Color"] = Color3.fromRGB(60, 0, 110),
+	["Dropdown Selected Color"] = Color3.fromRGB(70, 0, 120),
+	["Dropdown Selected Check Color"] = Color3.fromRGB(40, 0, 80),
+	["Textbox Highlight Color"] = Color3.fromRGB(60, 0, 100),
+	["Box Highlight Color"] = Color3.fromRGB(60, 0, 100),
+	["Slider Line Color"] = Color3.fromRGB(60, 0, 100),
+	["Slider Highlight Color"] = Color3.fromRGB(40, 0, 80),
 	["Tween Animation 1 Speed"] = DisableAnimation and 0 or 0.25,
 	["Tween Animation 2 Speed"] = DisableAnimation and 0 or 0.5,
 	["Tween Animation 3 Speed"] = DisableAnimation and 0 or 0.1,
@@ -149,7 +149,7 @@ Library_Function.HideGui.Name = 'Nousigi Hub Btn'
 
 
 local btnHide = Instance.new('ImageButton', Library_Function.HideGui)
-btnHide.BackgroundColor3 = Color3.fromRGB(20, 0, 40)
+btnHide.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 btnHide.BackgroundTransparency = 0
 btnHide.AnchorPoint = Vector2.new(0, 1)
 btnHide.Size = UDim2.new(0, 60, 0, 60)
@@ -165,7 +165,7 @@ UICornerBtnHide.CornerRadius = UDim.new(1, 0)
 
 local btnStroke = Instance.new("UIStroke")
 btnStroke.Parent = btnHide
-btnStroke.Color = Color3.fromRGB(90, 0, 160)
+btnStroke.Color = Color3.fromRGB(60, 0, 100)
 btnStroke.Thickness = 2
 
 local btnHideFrame = Instance.new('Frame', btnHide)
@@ -542,7 +542,7 @@ function Library:CreateWindow(Setting)
 
 	local uistr = Instance.new("UIStroke", MainContainer);
 	uistr.Thickness = 1;
-	uistr.Color = Color3.fromRGB(90, 0, 160);
+	uistr.Color = Color3.fromRGB(60, 0, 100);
 
 
 	getgenv().ReadyForGuiLoaded = true
@@ -574,7 +574,7 @@ function Library:CreateWindow(Setting)
 	
 	local TopStroke = Instance.new("Frame", TopMain)
 	TopStroke.Name = "TopStroke"
-	TopStroke.BackgroundColor3 = Color3.fromRGB(90, 0, 160)
+	TopStroke.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
 	TopStroke.BackgroundTransparency = 0.6
 	TopStroke.BorderSizePixel = 0
 	TopStroke.Position = UDim2.new(0, 0, 1, -1)
@@ -616,7 +616,7 @@ function Library:CreateWindow(Setting)
 	PageControl.BackgroundTransparency = 0
 
 	local pageControlStroke = Instance.new("UIStroke", PageControl)
-	pageControlStroke.Color = Color3.fromRGB(90, 0, 160)
+	pageControlStroke.Color = Color3.fromRGB(60, 0, 100)
 	pageControlStroke.Thickness = 1
 
 
@@ -975,7 +975,7 @@ function Library:CreateWindow(Setting)
 		PageContainer.Position = UDim2.new(0, 0, 0, 0)
 		PageContainer.Size = UDim2.new(1, 0, 1, 0)
 		PageContainer.LayoutOrder = LayoutOrder
-		PageContainer.BackgroundTransparency = getgenv().UIColor["Background 1 Transparency"]
+		PageContainer.BackgroundTransparency = 0
 
 		UICorner.CornerRadius = UDim.new(0, 4)
 		UICorner.Parent = PageContainer
@@ -1171,7 +1171,7 @@ function Library:CreateWindow(Setting)
 			Section.Name = Section_Name .. "_Dot"
 			Section.Parent = PageList
 			Section.Size = UDim2.new(1, -5, 0, 35)
-			Section.BackgroundColor3 = Color3.fromRGB(5, 5, 5)
+			Section.BackgroundColor3 = Color3.fromRGB(0, 0, 0)
 			Section.BackgroundTransparency = 0
 			Section.ClipsDescendants = false
 
@@ -1529,7 +1529,7 @@ function Library:CreateWindow(Setting)
              ClickArea_1.Name = "ClickArea"
              ClickArea_1.Parent = RowBG_1
              ClickArea_1.AnchorPoint = Vector2.new(1, 0.5)
-             ClickArea_1.BackgroundColor3 = Color3.fromRGB(90, 0, 160)
+             ClickArea_1.BackgroundColor3 = Color3.fromRGB(60, 0, 100)
              ClickArea_1.Position = UDim2.new(1, -8,0.5, 0)
              ClickArea_1.Size = UDim2.new(0, 94,0, 30)
              ClickArea_1.ClipsDescendants = true  -- TH?M D?NG N?Y: Ng?n ripple tr?n ra
@@ -1744,7 +1744,7 @@ function Library:CreateWindow(Setting)
                 Dropdownbg.Size = UDim2.new(1, -10, 1, 0)
                 Dropdownbg.ClipsDescendants = true
                 Dropdownbg.BackgroundColor3 = getgenv().UIColor["Background 1 Color"]
-                Dropdownbg.BackgroundTransparency = 0.25
+                Dropdownbg.BackgroundTransparency = 0
                 
                 Dropdowncorner.CornerRadius = UDim.new(0, 4)
                 Dropdowncorner.Name = "Dropdowncorner"
@@ -3770,6 +3770,7 @@ local OthersTab = Window:AddTab("Tab | Others")
 local FarmingHopTab = Window:AddTab("Tab | Farming and Hop")
 local FruitTab = Window:AddTab("Tab | Fruit")
 local RaidTab = Window:AddTab("Tab | Raid")
+local DungeonTab = Window:AddTab("Tab | Dungeon")
 local CombatTab = Window:AddTab("Tab | PvP")
 local RaceTab = Window:AddTab("Tab | Race")
 local DragonDojoTab = Window:AddTab("Tab | Dragon Dojo")
@@ -8601,10 +8602,172 @@ MultiFarmTab:AddToggle({
 });
 
 MultiFarmTab:AddSection("DUNGEON KAITUN");
+-- Auto Fully Dungeon: entra, completa todos os floors, skip hub e repete
+_G.Settings.Main = _G.Settings.Main or {};
+_G.Settings.Main["Auto Fully Dungeon"] = _G.Settings.Main["Auto Fully Dungeon"] or false;
+
 MultiFarmTab:AddParagraph({
-	Title = "Dungeon Kaitun",
-	Desc = "Em breve..."
+	Title = "Auto Fully Dungeon",
+	Desc = "Entra na Dungeon, derrota todos os NPCs de cada Floor (incluindo Kitsune F10 e Gas F15), faz Skip Hub e repete. Funciona apenas na Dungeon World (Place ID: 73902483975735)."
 });
+
+local _AutoFullyDungeonToggle = MultiFarmTab:AddToggle({
+	Title = "Auto Fully Dungeon",
+	Desc = "Liga/desliga o ciclo completo de Dungeon automático.",
+	Value = _G.Settings.Main["Auto Fully Dungeon"],
+	Callback = function(state)
+		_G.Settings.Main["Auto Fully Dungeon"] = state;
+		-- Também sincroniza com DungeonConfig se estiver na Dungeon
+		if getgenv().DungeonConfig then
+			getgenv().DungeonConfig.AutoFully = state;
+			-- Ativa todos os submódulos necessários
+			getgenv().DungeonConfig.AutoEnter    = state;
+			getgenv().DungeonConfig.AutoComplete = state;
+			getgenv().DungeonConfig.AutoSkipHub  = state;
+			getgenv().DungeonConfig.SelectBuffs  = state;
+		end;
+		(getgenv()).SaveSetting();
+	end
+});
+
+-- Auto-executa se estava salvo como ativo
+task.spawn(function()
+	task.wait(3); -- aguarda o script carregar completamente
+	if _G.Settings.Main["Auto Fully Dungeon"] then
+		if getgenv().DungeonConfig then
+			getgenv().DungeonConfig.AutoFully   = true;
+			getgenv().DungeonConfig.AutoEnter   = true;
+			getgenv().DungeonConfig.AutoComplete = true;
+			getgenv().DungeonConfig.AutoSkipHub = true;
+			getgenv().DungeonConfig.SelectBuffs = true;
+		end;
+		if _AutoFullyDungeonToggle and _AutoFullyDungeonToggle.SetStage then
+			_AutoFullyDungeonToggle.SetStage(true);
+		end;
+		Library:Notify({Title = "Dungeon", Content = "Auto Fully Dungeon reativado automaticamente!", Icon = "zap", Duration = 4});
+	end;
+end);
+
+-- Loop principal: Auto Fully Dungeon
+task.spawn(function()
+	local _DUNGEON_PID = 73902483975735;
+	while true do
+		task.wait(1);
+		if not _G.Settings.Main["Auto Fully Dungeon"] then continue; end;
+		if game.PlaceId ~= _DUNGEON_PID then
+			-- Não está na Dungeon World: notifica e aguarda
+			Library:Notify({Title = "Auto Fully Dungeon", Content = "Não está na Dungeon World! Place ID: " .. _DUNGEON_PID, Icon = "alert-triangle", Duration = 5});
+			task.wait(10);
+			continue;
+		end;
+		pcall(function()
+			-- Fase 1: Entrar (mesma lógica do AutoEnter)
+			if not (workspace:FindFirstChild("DungeonFloor") or workspace:FindFirstChild("FloorEnemies") or workspace:FindFirstChild("DungeonArea")) then
+				if #game:GetService("Players"):GetPlayers() < 2 then return; end;
+				-- Procura portal
+				for _, v in pairs(workspace:GetDescendants()) do
+					local name = v.Name:lower();
+					if (name:find("portal") or name:find("dungeon") or name:find("enter") or name:find("gate")) and v:IsA("BasePart") then
+						TweenPlayer(v.CFrame * CFrame.new(0, 2, 0));
+						task.wait(0.8);
+						for _, pp in pairs(v:GetDescendants()) do
+							if pp:IsA("ProximityPrompt") then pcall(function() fireproximityprompt(pp); end); end;
+						end;
+						local rep = game:GetService("ReplicatedStorage");
+						local remote = rep:FindFirstChild("CommF_", true) or (rep.Remotes and rep.Remotes:FindFirstChild("CommF_"));
+						if remote then
+							pcall(function() remote:InvokeServer("EnterDungeon"); end);
+							pcall(function() remote:InvokeServer("JoinDungeon"); end);
+						end;
+						break;
+					end;
+				end;
+				return;
+			end;
+
+			-- Fase 2: Completar floors
+			-- Detecta shrines do Kitsune (Floor 10)
+			local shrines = {};
+			local leaks   = {};
+			for _, v in pairs(workspace:GetDescendants()) do
+				local name = v.Name:lower();
+				if name:find("shrine") or (name:find("kitsune") and name:find("trap")) then
+					if v:IsA("BasePart") or v:IsA("Model") then table.insert(shrines, v); end;
+				end;
+				if name:find("gas") or name:find("leak") then
+					if v:IsA("BasePart") or v:IsA("Model") then table.insert(leaks, v); end;
+				end;
+			end;
+			if #shrines > 0 then
+				for _, sh in pairs(shrines) do
+					local pos = sh:IsA("Model") and sh:GetPivot().Position or sh.Position;
+					TweenPlayer(CFrame.new(pos.X, pos.Y + 15, pos.Z));
+					task.wait(0.1);
+					local vim = game:GetService("VirtualInputManager");
+					for _, key in pairs({"Z","X","C","V","F"}) do
+						pcall(function() vim:SendKeyEvent(true, key, false, game); task.wait(0.05); vim:SendKeyEvent(false, key, false, game); task.wait(0.03); end);
+					end;
+				end;
+				return;
+			end;
+			if #leaks > 0 then
+				for _, lk in pairs(leaks) do
+					local pos = lk:IsA("Model") and lk:GetPivot().Position or lk.Position;
+					TweenPlayer(CFrame.new(pos.X, pos.Y + 15, pos.Z));
+					task.wait(0.1);
+					local vim = game:GetService("VirtualInputManager");
+					for _, key in pairs({"Z","X","C","V","F"}) do
+						pcall(function() vim:SendKeyEvent(true, key, false, game); task.wait(0.05); vim:SendKeyEvent(false, key, false, game); task.wait(0.03); end);
+					end;
+				end;
+				return;
+			end;
+			-- Ataca inimigos normais
+			local enemyFolder = workspace:FindFirstChild("FloorEnemies") or workspace:FindFirstChild("Enemies") or workspace:FindFirstChild("DungeonEnemies");
+			if enemyFolder then
+				for _, v in pairs(enemyFolder:GetChildren()) do
+					if v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+						local hrp = v:FindFirstChild("HumanoidRootPart");
+						if hrp then
+							EquipWeapon(_G.Settings.Main["Selected Weapon"] or _G.SelectWeapon);
+							TweenPlayer(hrp.CFrame * CFrame.new(0, 20, 0));
+							task.wait(0.1);
+							getgenv().UseConfiguredSkills(hrp.Position);
+						end;
+						return;
+					end;
+				end;
+			end;
+			-- Sem inimigos: avança floor
+			local rep = game:GetService("ReplicatedStorage");
+			local remote = rep:FindFirstChild("CommF_", true) or (rep.Remotes and rep.Remotes:FindFirstChild("CommF_"));
+			if remote then
+				pcall(function() remote:InvokeServer("NextFloor"); end);
+				pcall(function() remote:InvokeServer("AdvanceFloor"); end);
+			end;
+			for _, v in pairs(workspace:GetDescendants()) do
+				if v:IsA("ProximityPrompt") then
+					local n = (v.ActionText or v.Name):lower();
+					if n:find("next") or n:find("advance") or n:find("continue") or n:find("pass") then
+						pcall(function() fireproximityprompt(v); end);
+					end;
+				end;
+			end;
+
+			-- Fase 3: Skip Hub ao terminar
+			local plrGui = game.Players.LocalPlayer.PlayerGui;
+			for _, gui in pairs(plrGui:GetDescendants()) do
+				if (gui:IsA("TextButton") or gui:IsA("ImageButton")) and gui.Visible then
+					local t = (gui.Text or ""):lower();
+					if t:find("skip") or t:find("lobby") or t:find("return") or t:find("continue") or t:find("next") then
+						gui:Activate();
+						task.wait(1);
+					end;
+				end;
+			end;
+		end);
+	end;
+end);
 
 
 -- TweenPlayer rapido e preciso para cada bau em sequencia.
@@ -12308,6 +12471,471 @@ BuyAcientQuestButton = RaceTab:AddButton({
 	end
 });
 CombatTab:AddSection(" PvP Tools");
+
+-- =====================================================================
+-- TAB: DUNGEON
+-- =====================================================================
+local _DUNGEON_PLACE_ID = 73902483975735;
+local _IS_DUNGEON = game.PlaceId == _DUNGEON_PLACE_ID;
+
+-- Estado global da Dungeon
+getgenv().DungeonConfig = getgenv().DungeonConfig or {
+	AutoFuse        = false,
+	AutoSpin        = false,
+	AutoEnter       = false,
+	AutoComplete    = false,
+	AutoSkipHub     = false,
+	SelectBuffs     = false,
+	SelectedBuffs   = {},
+	AutoFully       = false,
+};
+
+if not _IS_DUNGEON then
+	-- ── Mensagem: jogador não está na Dungeon World ──
+	DungeonTab:AddSection("Dungeon World");
+	DungeonTab:AddParagraph({
+		Title = "⚠ You are not in Dungeon World",
+		Desc = "Please go to Dungeon World to use these features.\nDungeon Place ID: " .. tostring(_DUNGEON_PLACE_ID)
+	});
+else
+	-- ═══════════════════════════════════════════════
+	--   FUNÇÕES INTERNAS DA DUNGEON
+	-- ═══════════════════════════════════════════════
+
+	-- Nomes de buffs conhecidos (cartas)
+	local _KNOWN_BUFFS = {
+		"ATK UP","DEF UP","SPD UP","HP UP","CDR",
+		"CRIT UP","DOUBLE HIT","LIFESTEAL","SHIELD",
+		"REFLECT","REGEN","DASH UP","RANGE UP",
+	};
+
+	-- Verifica se jogador está no lobby ou dentro da dungeon
+	local function _InDungeonLobby()
+		return workspace:FindFirstChild("DungeonLobby") ~= nil
+			or workspace:FindFirstChild("Lobby") ~= nil;
+	end;
+
+	-- Verifica se partida de dungeon está ativa
+	local function _InDungeonMatch()
+		return workspace:FindFirstChild("DungeonFloor") ~= nil
+			or workspace:FindFirstChild("FloorEnemies") ~= nil
+			or workspace:FindFirstChild("DungeonArea") ~= nil;
+	end;
+
+	-- Retorna NPC de anéis no lobby (procura por nome)
+	local function _FindRingNPC()
+		for _, v in pairs(workspace:GetDescendants()) do
+			if v:IsA("Model") then
+				local name = v.Name:lower();
+				if name:find("ring") and (name:find("npc") or name:find("dealer") or name:find("fus") or name:find("merge") or name:find("spin")) then
+					return v;
+				end;
+			end;
+		end;
+		for _, v in pairs(workspace:FindFirstChild("NPCs") and workspace.NPCs:GetChildren() or {}) do
+			if v.Name:lower():find("ring") then return v; end;
+		end;
+		return nil;
+	end;
+
+	-- Retorna portal de entrada da dungeon no lobby
+	local function _FindDungeonPortal()
+		for _, v in pairs(workspace:GetDescendants()) do
+			local name = v.Name:lower();
+			if (name:find("portal") or name:find("dungeon") or name:find("enter") or name:find("gate")) and v:IsA("BasePart") then
+				return v;
+			end;
+		end;
+		return nil;
+	end;
+
+	-- Retorna inimigos da dungeon no floor atual
+	local function _GetFloorEnemies()
+		local enemies = {};
+		local folder = workspace:FindFirstChild("FloorEnemies") or workspace:FindFirstChild("Enemies") or workspace:FindFirstChild("DungeonEnemies");
+		if folder then
+			for _, v in pairs(folder:GetChildren()) do
+				if v:IsA("Model") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+					table.insert(enemies, v);
+				end;
+			end;
+		end;
+		return enemies;
+	end;
+
+	-- Detecta armadilha do Kitsune (shrines)
+	local function _GetKitsuneShrines()
+		local shrines = {};
+		for _, v in pairs(workspace:GetDescendants()) do
+			local name = v.Name:lower();
+			if name:find("shrine") or name:find("kitsune") or name:find("trap") then
+				if v:IsA("BasePart") or v:IsA("Model") then
+					table.insert(shrines, v);
+				end;
+			end;
+		end;
+		return shrines;
+	end;
+
+	-- Detecta vazamentos de gás (Floor 15)
+	local function _GetGasLeaks()
+		local leaks = {};
+		for _, v in pairs(workspace:GetDescendants()) do
+			local name = v.Name:lower();
+			if name:find("gas") or name:find("leak") or name:find("vent") or name:find("pipe") then
+				if v:IsA("BasePart") or v:IsA("Model") then
+					table.insert(leaks, v);
+				end;
+			end;
+		end;
+		return leaks;
+	end;
+
+	-- Ataca um alvo usando a weapon selecionada
+	local function _AttackTarget(target)
+		pcall(function()
+			if not target then return; end;
+			local hrp = target:IsA("Model") and (target:FindFirstChild("HumanoidRootPart") or target.PrimaryPart) or target;
+			if not hrp then return; end;
+			local char = game.Players.LocalPlayer.Character;
+			if not char then return; end;
+			EquipWeapon(_G.Settings.Main["Selected Weapon"] or _G.SelectWeapon);
+			TweenPlayer(hrp.CFrame * CFrame.new(0, 20, 0));
+			task.wait(0.1);
+			getgenv().UseConfiguredSkills(hrp.Position);
+		end);
+	end;
+
+	-- Spam de skills em um ponto (para Kitsune shrines e gas leaks)
+	local function _SpamSkillsAt(pos)
+		pcall(function()
+			local char = game.Players.LocalPlayer.Character;
+			if not char then return; end;
+			TweenPlayer(CFrame.new(pos.X, pos.Y + 15, pos.Z));
+			task.wait(0.15);
+			local vim = game:GetService("VirtualInputManager");
+			for _, key in pairs({"Z","X","C","V","F"}) do
+				pcall(function()
+					vim:SendKeyEvent(true, key, false, game);
+					task.wait(0.06);
+					vim:SendKeyEvent(false, key, false, game);
+					task.wait(0.04);
+				end);
+			end;
+		end);
+	end;
+
+	-- Seleciona um buff de carta pelo nome
+	local function _SelectBuff(buffName)
+		pcall(function()
+			-- Procura botões de buff na tela
+			local plrGui = game.Players.LocalPlayer.PlayerGui;
+			for _, gui in pairs(plrGui:GetDescendants()) do
+				if (gui:IsA("TextButton") or gui:IsA("ImageButton")) then
+					if gui.Text and gui.Text:lower():find(buffName:lower()) then
+						gui:Activate();
+						return;
+					end;
+				end;
+			end;
+		end);
+	end;
+
+	-- Skip hub (botão de voltar ao lobby após dungeon)
+	local function _PressSkipHub()
+		pcall(function()
+			local plrGui = game.Players.LocalPlayer.PlayerGui;
+			for _, gui in pairs(plrGui:GetDescendants()) do
+				if (gui:IsA("TextButton") or gui:IsA("ImageButton")) then
+					local t = (gui.Text or ""):lower();
+					if t:find("skip") or t:find("lobby") or t:find("return") or t:find("continue") or t:find("next") then
+						gui:Activate();
+						return;
+					end;
+				end;
+			end;
+		end);
+	end;
+
+	-- ═══════════════════════════════════════════════
+	--   LOOP: AUTO FUSE RINGS
+	-- ═══════════════════════════════════════════════
+	DungeonTab:AddSection("Rings");
+	DungeonTab:AddToggle({
+		Title = "Automatically Fuse Rings",
+		Desc = "Vai até o NPC de anéis no lobby e funde os anéis automaticamente.",
+		Value = getgenv().DungeonConfig.AutoFuse,
+		Callback = function(state)
+			getgenv().DungeonConfig.AutoFuse = state;
+		end
+	});
+	task.spawn(function()
+		while true do
+			task.wait(1);
+			if not getgenv().DungeonConfig.AutoFuse then continue; end;
+			pcall(function()
+				local npc = _FindRingNPC();
+				if not npc then return; end;
+				local hrp_npc = npc:FindFirstChild("HumanoidRootPart") or npc.PrimaryPart;
+				if not hrp_npc then return; end;
+				TweenPlayer(hrp_npc.CFrame * CFrame.new(0, 0, 5));
+				task.wait(0.8);
+				-- Invoca fusão de anéis via remote
+				local rep = game:GetService("ReplicatedStorage");
+				local remote = rep:FindFirstChild("CommF_", true) or rep.Remotes and rep.Remotes:FindFirstChild("CommF_");
+				if remote then
+					pcall(function() remote:InvokeServer("FuseRing"); end);
+					pcall(function() remote:InvokeServer("MergeRing"); end);
+					pcall(function() remote:InvokeServer("CombineRing"); end);
+				end;
+				-- Tenta clicar no NPC pela ProximityPrompt
+				for _, pp in pairs(npc:GetDescendants()) do
+					if pp:IsA("ProximityPrompt") then
+						pcall(function() fireproximityprompt(pp); end);
+					end;
+				end;
+			end);
+		end;
+	end);
+
+	-- ═══════════════════════════════════════════════
+	--   LOOP: AUTO SPIN RINGS
+	-- ═══════════════════════════════════════════════
+	DungeonTab:AddToggle({
+		Title = "Automatically Spin Rings",
+		Desc = "Gira anéis automaticamente no NPC do lobby.",
+		Value = getgenv().DungeonConfig.AutoSpin,
+		Callback = function(state)
+			getgenv().DungeonConfig.AutoSpin = state;
+		end
+	});
+	task.spawn(function()
+		while true do
+			task.wait(1);
+			if not getgenv().DungeonConfig.AutoSpin then continue; end;
+			pcall(function()
+				local npc = _FindRingNPC();
+				if not npc then return; end;
+				local hrp_npc = npc:FindFirstChild("HumanoidRootPart") or npc.PrimaryPart;
+				if not hrp_npc then return; end;
+				TweenPlayer(hrp_npc.CFrame * CFrame.new(0, 0, 5));
+				task.wait(0.8);
+				local rep = game:GetService("ReplicatedStorage");
+				local remote = rep:FindFirstChild("CommF_", true) or rep.Remotes and rep.Remotes:FindFirstChild("CommF_");
+				if remote then
+					pcall(function() remote:InvokeServer("SpinRing"); end);
+					pcall(function() remote:InvokeServer("RollRing"); end);
+					pcall(function() remote:InvokeServer("RerollRing"); end);
+				end;
+				for _, pp in pairs(npc:GetDescendants()) do
+					if pp:IsA("ProximityPrompt") then
+						local name = pp.ActionText and pp.ActionText:lower() or "";
+						if name:find("spin") or name:find("roll") or name:find("reroll") then
+							pcall(function() fireproximityprompt(pp); end);
+						end;
+					end;
+				end;
+			end);
+		end;
+	end);
+
+	-- ═══════════════════════════════════════════════
+	--   LOOP: AUTO ENTER DUNGEON
+	-- ═══════════════════════════════════════════════
+	DungeonTab:AddSection("Dungeon");
+	DungeonTab:AddToggle({
+		Title = "Automatically Enter Dungeon",
+		Desc = "Vai ao portal da dungeon no lobby e aguarda a partida iniciar (requer 2+ jogadores).",
+		Value = getgenv().DungeonConfig.AutoEnter,
+		Callback = function(state)
+			getgenv().DungeonConfig.AutoEnter = state;
+		end
+	});
+	task.spawn(function()
+		while true do
+			task.wait(1);
+			if not getgenv().DungeonConfig.AutoEnter then continue; end;
+			pcall(function()
+				-- Só entra se tiver 2+ jogadores no servidor
+				if #game:GetService("Players"):GetPlayers() < 2 then return; end;
+				if _InDungeonMatch() then return; end;
+				local portal = _FindDungeonPortal();
+				if not portal then return; end;
+				TweenPlayer(portal.CFrame * CFrame.new(0, 2, 0));
+				task.wait(0.8);
+				-- Tenta entrar via ProximityPrompt ou invocação
+				for _, pp in pairs(portal:GetDescendants()) do
+					if pp:IsA("ProximityPrompt") then
+						pcall(function() fireproximityprompt(pp); end);
+					end;
+				end;
+				local rep = game:GetService("ReplicatedStorage");
+				local remote = rep:FindFirstChild("CommF_", true) or rep.Remotes and rep.Remotes:FindFirstChild("CommF_");
+				if remote then
+					pcall(function() remote:InvokeServer("EnterDungeon"); end);
+					pcall(function() remote:InvokeServer("JoinDungeon"); end);
+				end;
+			end);
+		end;
+	end);
+
+	-- ═══════════════════════════════════════════════
+	--   LOOP: AUTO COMPLETE DUNGEON
+	-- ═══════════════════════════════════════════════
+	DungeonTab:AddToggle({
+		Title = "Automatically Complete Dungeon",
+		Desc = "Ataca NPCs de cada Floor, destrói shrines do Kitsune (Floor 10) e vazamentos de gás (Floor 15), e avança automaticamente.",
+		Value = getgenv().DungeonConfig.AutoComplete,
+		Callback = function(state)
+			getgenv().DungeonConfig.AutoComplete = state;
+		end
+	});
+	task.spawn(function()
+		while true do
+			task.wait(0.3);
+			if not getgenv().DungeonConfig.AutoComplete then continue; end;
+			pcall(function()
+				if not _InDungeonMatch() then return; end;
+				-- Detecta Floor atual
+				local floorNum = 0;
+				for _, v in pairs(workspace:GetDescendants()) do
+					local name = v.Name:lower();
+					if name:find("floor") then
+						local n = tonumber(name:match("%d+"));
+						if n and n > floorNum then floorNum = n; end;
+					end;
+				end;
+
+				-- Floor 10: destruir Kitsune Shrines primeiro
+				if floorNum == 10 then
+					local shrines = _GetKitsuneShrines();
+					if #shrines > 0 then
+						for _, shrine in pairs(shrines) do
+							if not getgenv().DungeonConfig.AutoComplete then break; end;
+							local pos = shrine:IsA("Model") and shrine:GetPivot().Position or shrine.Position;
+							_SpamSkillsAt(pos);
+							task.wait(0.2);
+						end;
+						return;
+					end;
+				end;
+
+				-- Floor 15: destruir vazamentos de gás primeiro
+				if floorNum == 15 then
+					local leaks = _GetGasLeaks();
+					if #leaks > 0 then
+						for _, leak in pairs(leaks) do
+							if not getgenv().DungeonConfig.AutoComplete then break; end;
+							local pos = leak:IsA("Model") and leak:GetPivot().Position or leak.Position;
+							_SpamSkillsAt(pos);
+							task.wait(0.2);
+						end;
+						return;
+					end;
+				end;
+
+				-- Ataca inimigos do floor atual
+				local enemies = _GetFloorEnemies();
+				if #enemies > 0 then
+					local target = enemies[1];
+					if target and target:FindFirstChild("Humanoid") and target.Humanoid.Health > 0 then
+						_AttackTarget(target);
+					end;
+				else
+					-- Sem inimigos: tenta avançar floor
+					local rep = game:GetService("ReplicatedStorage");
+					local remote = rep:FindFirstChild("CommF_", true) or rep.Remotes and rep.Remotes:FindFirstChild("CommF_");
+					if remote then
+						pcall(function() remote:InvokeServer("NextFloor"); end);
+						pcall(function() remote:InvokeServer("AdvanceFloor"); end);
+					end;
+					-- Tenta ProximityPrompts de passagem
+					for _, v in pairs(workspace:GetDescendants()) do
+						if v:IsA("ProximityPrompt") then
+							local n = v.ActionText and v.ActionText:lower() or v.Name:lower();
+							if n:find("next") or n:find("advance") or n:find("continue") or n:find("pass") then
+								pcall(function() fireproximityprompt(v); end);
+							end;
+						end;
+					end;
+				end;
+			end);
+		end;
+	end);
+
+	-- ═══════════════════════════════════════════════
+	--   SELECT BUFFS
+	-- ═══════════════════════════════════════════════
+	DungeonTab:AddSection("Buffs");
+	DungeonTab:AddToggle({
+		Title = "Select Buffs (Auto-choose cards)",
+		Desc = "Ativa a seleção automática de buffs quando aparecer a tela de cartas na dungeon.",
+		Value = getgenv().DungeonConfig.SelectBuffs,
+		Callback = function(state)
+			getgenv().DungeonConfig.SelectBuffs = state;
+		end
+	});
+	DungeonTab:AddDropdown({
+		Title = "Buffs to Select",
+		Desc = "Escolha quais buffs devem ser selecionados automaticamente (multi-seleção)",
+		Values = _KNOWN_BUFFS,
+		Value = getgenv().DungeonConfig.SelectedBuffs[1] or _KNOWN_BUFFS[1],
+		Callback = function(option)
+			-- Adiciona/remove da lista
+			local found = false;
+			for i, v in pairs(getgenv().DungeonConfig.SelectedBuffs) do
+				if v == option then found = true; table.remove(getgenv().DungeonConfig.SelectedBuffs, i); break; end;
+			end;
+			if not found then table.insert(getgenv().DungeonConfig.SelectedBuffs, option); end;
+		end
+	});
+	-- Loop: seleciona buffs quando aparecer tela de cartas
+	task.spawn(function()
+		while true do
+			task.wait(0.5);
+			if not getgenv().DungeonConfig.SelectBuffs then continue; end;
+			if #getgenv().DungeonConfig.SelectedBuffs == 0 then continue; end;
+			pcall(function()
+				local plrGui = game.Players.LocalPlayer.PlayerGui;
+				for _, gui in pairs(plrGui:GetDescendants()) do
+					if (gui:IsA("TextButton") or gui:IsA("ImageButton")) and gui.Visible then
+						local t = (gui.Text or ""):lower();
+						for _, buffName in pairs(getgenv().DungeonConfig.SelectedBuffs) do
+							if t:find(buffName:lower()) then
+								gui:Activate();
+								task.wait(0.3);
+								break;
+							end;
+						end;
+					end;
+				end;
+			end);
+		end;
+	end);
+
+	-- ═══════════════════════════════════════════════
+	--   AUTO SKIP HUB
+	-- ═══════════════════════════════════════════════
+	DungeonTab:AddSection("Post-Dungeon");
+	DungeonTab:AddToggle({
+		Title = "Auto Skip Hub",
+		Desc = "Quando a dungeon terminar, aperta automaticamente para voltar ao lobby.",
+		Value = getgenv().DungeonConfig.AutoSkipHub,
+		Callback = function(state)
+			getgenv().DungeonConfig.AutoSkipHub = state;
+		end
+	});
+	task.spawn(function()
+		while true do
+			task.wait(1);
+			if not getgenv().DungeonConfig.AutoSkipHub then continue; end;
+			pcall(function()
+				_PressSkipHub();
+			end);
+		end;
+	end);
+
+end; -- fim do bloco _IS_DUNGEON
 
 -- Target Player
 local PvPTargetList = {};
